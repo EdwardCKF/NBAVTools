@@ -10,3 +10,7 @@ import UIKit
 
 let SCREEN_WIDTH = UIScreen.main.bounds.width
 let SCREEN_HEIGHT = UIScreen.main.bounds.height
+
+func Degree(_ degree: Double) -> CGFloat {
+    return CGFloat(degree / 180 * Double.pi)
+}

@@ -21,6 +21,8 @@
 		3C52B37E1ECE927A00B9687D /* IMG_8114.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3C52B3711ECE927A00B9687D /* IMG_8114.mp4 */; };
 		3C52B37F1ECE927A00B9687D /* Snip20170518_1.png in Resources */ = {isa = PBXBuildFile; fileRef = 3C52B3721ECE927A00B9687D /* Snip20170518_1.png */; };
 		3C52B3801ECE927A00B9687D /* Snip20170518_3.png in Resources */ = {isa = PBXBuildFile; fileRef = 3C52B3731ECE927A00B9687D /* Snip20170518_3.png */; };
+		3C52B3821ECE968C00B9687D /* NBAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C52B3811ECE968C00B9687D /* NBAsset.swift */; };
+		3C52B3841ECE9F5300B9687D /* AVAsset+NB+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C52B3831ECE9F5300B9687D /* AVAsset+NB+Extension.swift */; };
 		3C692DF81EBC427E003005C6 /* AVVideoReverse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C692DF71EBC427E003005C6 /* AVVideoReverse.swift */; };
 		3CA9D98E1ECBF1F70044B670 /* AVVideoRotate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA9D98D1ECBF1F70044B670 /* AVVideoRotate.swift */; };
 		3CA9D9941ECC60650044B670 /* AVVideoTrim.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA9D9931ECC60650044B670 /* AVVideoTrim.swift */; };
@@ -54,6 +56,8 @@
 		3C52B3711ECE927A00B9687D /* IMG_8114.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IMG_8114.mp4; sourceTree = "<group>"; };
 		3C52B3721ECE927A00B9687D /* Snip20170518_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Snip20170518_1.png; sourceTree = "<group>"; };
 		3C52B3731ECE927A00B9687D /* Snip20170518_3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Snip20170518_3.png; sourceTree = "<group>"; };
+		3C52B3811ECE968C00B9687D /* NBAsset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBAsset.swift; sourceTree = "<group>"; };
+		3C52B3831ECE9F5300B9687D /* AVAsset+NB+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVAsset+NB+Extension.swift"; sourceTree = "<group>"; };
 		3C692DF71EBC427E003005C6 /* AVVideoReverse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVVideoReverse.swift; sourceTree = "<group>"; };
 		3C692DF91EBC56FF003005C6 /* SFAVTools-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SFAVTools-Bridging-Header.h"; sourceTree = "<group>"; };
 		3CA9D98D1ECBF1F70044B670 /* AVVideoRotate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVVideoRotate.swift; sourceTree = "<group>"; };
@@ -134,7 +138,9 @@
 				3CA9D9931ECC60650044B670 /* AVVideoTrim.swift */,
 				3CDA17371ECD2DDC005F912C /* AVVideoBackgroundFilter.swift */,
 				3C692DF71EBC427E003005C6 /* AVVideoReverse.swift */,
+				3C52B3811ECE968C00B9687D /* NBAsset.swift */,
 				3CAF98341EBC22D600D8DA5E /* AVExportCommand.swift */,
+				3C52B3831ECE9F5300B9687D /* AVAsset+NB+Extension.swift */,
 				3CD5106A1ECDACB400B40746 /* Tools */,
 				3C52B3661ECE927A00B9687D /* Resources */,
 				3CAF98241EBC1BCE00D8DA5E /* Main.storyboard */,
@@ -271,6 +277,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CAF98351EBC22D600D8DA5E /* AVExportCommand.swift in Sources */,
+				3C52B3841ECE9F5300B9687D /* AVAsset+NB+Extension.swift in Sources */,
 				3CA9D9941ECC60650044B670 /* AVVideoTrim.swift in Sources */,
 				3CDA17381ECD2DDC005F912C /* AVVideoBackgroundFilter.swift in Sources */,
 				3CD510711ECDB18700B40746 /* UIImage+Extension.swift in Sources */,
@@ -278,6 +285,7 @@
 				3CD510781ECDBBC300B40746 /* UIImageEffects.m in Sources */,
 				3C692DF81EBC427E003005C6 /* AVVideoReverse.swift in Sources */,
 				3CA9D98E1ECBF1F70044B670 /* AVVideoRotate.swift in Sources */,
+				3C52B3821ECE968C00B9687D /* NBAsset.swift in Sources */,
 				3CD5106F1ECDACCF00B40746 /* AVAsset+Extension.swift in Sources */,
 				3CAF98511EBC3E1300D8DA5E /* AVVideoSpeed.swift in Sources */,
 				3CAF98231EBC1BCE00D8DA5E /* ViewController.swift in Sources */,

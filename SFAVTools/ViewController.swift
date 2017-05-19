@@ -14,8 +14,7 @@ class ViewController: UIViewController {
     var avCommand: AVExportCommand?
     var avReverse: AVVideoReverse?
     var testView: UIView?
-    
-    
+    var asset: AVAsset?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,7 +36,36 @@ class ViewController: UIViewController {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 
-        demoForBackgroundFilter()
+        testForNBRotate()
+    }
+    
+    func testForNBRotate() {
+        let destinationPath = Tools.getTempVideoPath()
+        let destinationURL = URL(fileURLWithPath: destinationPath)
+        let videoURL = Bundle.main.url(forResource: "5", withExtension: "m4v")!
+        asset = AVAsset(url: videoURL)
+        let cgImage = try? asset?.getImage(fromTime: 0.1).applyBlur(20).cgImage
+        
+        
+        
+        
+        
+        asset?.nb
+            
+            .rotate(360)
+            
+            .stretchRender(view.bounds.size)
+            
+            .background(cgImage!!)
+            
+            .exportVideo(destinationURL) {[weak self] (error) in
+                
+                if let err = error {
+                    debugPrint("error: \(err)")
+                } else {
+                    self?.alertForSaveVideo(videoPath: destinationPath)
+                }
+        }
     }
     
     func demoForBackgroundFilter() {

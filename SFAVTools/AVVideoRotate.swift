@@ -8,10 +8,6 @@
 
 import AVFoundation
 
-private func Degree(_ degree: Double) -> CGFloat {
-    return CGFloat(degree / 180 * Double.pi)
-}
-
 class AVVideoRotate {
     
     class func videoRotate(videoAsset asset: AVAsset, rotationAngle: Double) throws -> (AVMutableComposition,AVMutableVideoComposition) {

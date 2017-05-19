@@ -15,11 +15,8 @@ class AVVideoMerge {
     
         let mixComposition = AVMutableComposition()
         
-        var videoTrack: AVMutableCompositionTrack? //= mixComposition.addMutableTrack(withMediaType: AVMediaTypeVideo, preferredTrackID: kCMPersistentTrackID_Invalid)
-        var audioTrack: AVMutableCompositionTrack? //= mixComposition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid)
-        
-//        let videoTrack = mixComposition.addMutableTrack(withMediaType: AVMediaTypeVideo, preferredTrackID: kCMPersistentTrackID_Invalid)
-//        let audioTrack = mixComposition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid)
+        var videoTrack: AVMutableCompositionTrack?
+        var audioTrack: AVMutableCompositionTrack?
         
         var totalDuration: CMTime = kCMTimeZero
         
