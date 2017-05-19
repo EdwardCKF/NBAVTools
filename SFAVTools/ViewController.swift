@@ -61,7 +61,7 @@ class ViewController: UIViewController {
                 self?.avCommand = nil
             })
         } catch {
-            debugPrint("转换方向失败:\(error)")
+            debugPrint("添加背景失败:\(error)")
         }
     }
     
