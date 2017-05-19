@@ -13,8 +13,7 @@ class AVVideoBackgroundFilter {
     
     class func videoProcess(videoAsset asset: AVAsset, image: CGImage) throws -> (AVMutableComposition,AVMutableVideoComposition) {
         
-        var mutableComposition = AVMutableComposition()
-        
+        let mutableComposition = AVMutableComposition()
         
         var assetVideoTrack: AVAssetTrack?
         var assetAudioTrack: AVAssetTrack?
@@ -49,17 +48,30 @@ class AVVideoBackgroundFilter {
         }
         
         //size and transform processing
-        let naturalSize = _assetVideoTrack.naturalSize
-        let renderH = naturalSize.width / UIScreen.main.bounds.width * UIScreen.main.bounds.height
-        let renderSize: CGSize = CGSize(width: naturalSize.width, height: renderH)
+        let applyTransfromSize = _assetVideoTrack.naturalSize.applying(asset.preferredTransform)
+        let absWidth = CGFloat(fabs(Double(applyTransfromSize.width)))
+        let absHeight = CGFloat(fabs(Double(applyTransfromSize.height)))
+        let naturalSize = CGSize(width: absWidth, height: absHeight)
+        
+        let renderW: CGFloat
+        let renderH: CGFloat
+        if (naturalSize.width/naturalSize.height) >= (SCREEN_WIDTH/SCREEN_HEIGHT) {
+            renderW = naturalSize.width
+            renderH = naturalSize.width / SCREEN_WIDTH * SCREEN_HEIGHT
+        } else {
+            renderH = naturalSize.height
+            renderW = naturalSize.height / SCREEN_HEIGHT * SCREEN_WIDTH
+        }
+     
+        let renderSize: CGSize = CGSize(width: renderW, height: renderH)
         
         var videoTransform = asset.preferredTransform
-        print(videoTransform)
+        let tx = (renderW - naturalSize.width) * 0.5
         let ty = (renderH - naturalSize.height) * 0.5
+        videoTransform.tx = tx
         videoTransform.ty = ty
         
-        //加水印
-
+        //Add background watermark.
         let parentLayer = CALayer()
         parentLayer.backgroundColor = UIColor.blue.cgColor
         let videoLayer = CALayer()
@@ -68,7 +80,7 @@ class AVVideoBackgroundFilter {
         videoLayer.backgroundColor = UIColor.yellow.cgColor
         let shapeLayer = CAShapeLayer()
         
-        let aPath = UIBezierPath(rect: CGRect(origin: CGPoint(x: 0, y: ty), size: naturalSize))
+        let aPath = UIBezierPath(rect: CGRect(origin: CGPoint(x: tx, y: ty), size: naturalSize))
         shapeLayer.path = aPath.cgPath
         videoLayer.mask = shapeLayer
         

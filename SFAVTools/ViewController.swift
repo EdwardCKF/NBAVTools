@@ -19,8 +19,7 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-//        view.backgroundColor = UIColor.yellow
-//        view.layer.backgroundColor = UIColor(patternImage: UIImage(named: "Snip20170518_3")!).cgColor
+
         let blurImage = UIImage(named: "Snip20170518_3")!.applyBlur(20)
         let cgImage = blurImage.cgImage!
         let iamgeLayer = AVVideoBackgroundFilter.createLayer(view.frame.size, image: cgImage)
