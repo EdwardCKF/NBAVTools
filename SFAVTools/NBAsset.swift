@@ -31,8 +31,17 @@ public class NBAsset {
     private func initProperties() {
         
         mutableComposition = getMutableComposition(asset)
-        videoTransform = asset.preferredTransform
+        videoTransform = getDefultTransform()
         videoRenderSize = getDefultRenderSize()
+    }
+    
+    func startProcessVideo(_ closure: ((_ make: NBAsset)->())) -> NBAsset {
+    
+        closure(self)
+        
+        processMutableVideoComposition()
+        
+        return self
     }
     
     func videoMode(_ mode: String) -> NBAsset {
@@ -42,9 +51,16 @@ public class NBAsset {
         return self
     }
     
-    func rotate(_ angle: Double) -> NBAsset {
+    @discardableResult func rotate(_ angle: Double) -> NBAsset {
         
         _rotate(angle)
+        
+        return self
+    }
+    
+    func trim(progressRange range: Range<Double>) -> NBAsset {
+    
+        _trim(progressRange: range)
         
         return self
     }
@@ -90,13 +106,13 @@ public class NBAsset {
         }
     }
     
-    private func getMutableComposition(_ asset: AVAsset) -> AVMutableComposition {
+    fileprivate func getMutableComposition(_ asset: AVAsset, timeRange: CMTimeRange? = nil) -> AVMutableComposition {
         var videoTrack: AVMutableCompositionTrack?
         var audioTrack: AVMutableCompositionTrack?
         
         let mixComposition = AVMutableComposition()
-        
-        let timeRange = CMTimeRangeMake(kCMTimeZero, asset.duration)
+
+        let _timeRange = timeRange ?? CMTimeRangeMake(kCMTimeZero, asset.duration)
         
         for assetVideoTrack in asset.tracks(withMediaType: AVMediaTypeVideo) {
             
@@ -105,7 +121,7 @@ public class NBAsset {
             }
             
             do {
-                try videoTrack?.insertTimeRange(timeRange, of: assetVideoTrack, at: kCMTimeZero)
+                try videoTrack?.insertTimeRange(_timeRange, of: assetVideoTrack, at: kCMTimeZero)
             } catch {
                 
             }
@@ -118,7 +134,7 @@ public class NBAsset {
             }
             
             do {
-                try audioTrack?.insertTimeRange(timeRange, of: assetAudioTrack, at: kCMTimeZero)
+                try audioTrack?.insertTimeRange(_timeRange, of: assetAudioTrack, at: kCMTimeZero)
             } catch {
                 
             }
@@ -132,6 +148,13 @@ public class NBAsset {
             return CGSize.zero
         }
         return videoTrack.naturalSize
+    }
+    
+    private func getDefultTransform() -> CGAffineTransform {
+        guard let videoTrack = asset.tracks(withMediaType: AVMediaTypeVideo).first else {
+            return CGAffineTransform.identity
+        }
+        return videoTrack.preferredTransform
     }
 }
 
@@ -171,7 +194,7 @@ extension NBAsset {
         videoTransform.ty = ty
         videoRenderSize = CGSize(width: absWidth, height: absHeight)
         
-        processMutableVideoComposition()
+//        processMutableVideoComposition()
     }
     
     fileprivate func _stretch(renderSize fromSize : CGSize, toSize: CGSize) {
@@ -195,7 +218,7 @@ extension NBAsset {
         
         videoRenderSize = CGSize(width: renderW, height: renderH)
         
-        processMutableVideoComposition()
+//        processMutableVideoComposition()
     }
     
     fileprivate func _background(_ image: CGImage) {
@@ -239,7 +262,31 @@ extension NBAsset {
         parentLayer.addSublayer(videoLayer)
         
         mutableVideoComposition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayer: videoLayer, in: parentLayer)
-        processMutableVideoComposition()
+//        processMutableVideoComposition()
+    }
+    
+    fileprivate func _trim(progressRange range: Range<Double>) {
+        
+        let rangeStart = range.lowerBound <= 0 ? 0 : range.lowerBound
+        let rangeEnd = range.upperBound >= 1 ? 1 : range.upperBound
+        
+        if rangeStart >= rangeEnd {
+            assertionFailure("NBAsset:_trim(progressRange range: Range<Double>): trim range during can not small than 0.")
+            return
+        }
+        
+        let videoDuring = CMTimeGetSeconds(asset.duration)
+        let timeScale = asset.duration.timescale
+        
+        let startIntervel = videoDuring * rangeStart
+        let endIntervel = videoDuring * rangeEnd
+        
+        let startTime = CMTime(seconds: startIntervel, preferredTimescale: timeScale)
+        let endTime = CMTime(seconds: endIntervel, preferredTimescale: timeScale)
+        
+        let timeRange = CMTimeRange(start: startTime, end: endTime)
+        
+        mutableComposition = getMutableComposition(mutableComposition, timeRange: timeRange)
     }
 }
 

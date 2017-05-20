@@ -36,23 +36,46 @@ class ViewController: UIViewController {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 
-        testForNBRotate()
+        testForNBAll()
     }
     
-    func testForNBRotate() {
+    func testForNBAll() {
+    
         let destinationPath = Tools.getTempVideoPath()
         let destinationURL = URL(fileURLWithPath: destinationPath)
         let videoURL = Bundle.main.url(forResource: "5", withExtension: "m4v")!
         asset = AVAsset(url: videoURL)
         let cgImage = try? asset?.getImage(fromTime: 0.1).applyBlur(20).cgImage
         
+        asset?.nb.startProcessVideo { (make) in
+            
+            make.trim(progressRange: Range(uncheckedBounds: (lower: 0.5, upper: 2)))
+            make.rotate(90)
+            make.stretchRender(view.frame.size)
+            make.background(cgImage!!)
+            
+        }.exportVideo(destinationURL) {[weak self] (error) in
+            if let err = error {
+                debugPrint("error: \(err)")
+            } else {
+                self?.alertForSaveVideo(videoPath: destinationPath)
+            }
+        }
+    }
+    
+    func testForNBRotate() {
         
-        
-        
-        
+        let destinationPath = Tools.getTempVideoPath()
+        let destinationURL = URL(fileURLWithPath: destinationPath)
+        let videoURL = Bundle.main.url(forResource: "5", withExtension: "m4v")!
+        asset = AVAsset(url: videoURL)
+        let cgImage = try? asset?.getImage(fromTime: 0.1).applyBlur(20).cgImage
+
         asset?.nb
             
-            .rotate(360)
+            .trim(progressRange: Range(uncheckedBounds: (lower: 0.5, upper: 1)))
+            
+            .rotate(90)
             
             .stretchRender(view.bounds.size)
             
