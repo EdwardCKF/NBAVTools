@@ -180,9 +180,9 @@ extension NBAsset {
     }
     
     fileprivate func _rotate(_ angle: Double) {
-        
-        let degree = Degree(angle)
-        
+
+        let _angle = Double(Int64(fabs(angle)) % 360)
+        let degree = Degree(_angle)
         //transform processing
         videoTransform = videoTransform.rotated(by: CGFloat(degree))
         let applySize = videoRenderSize.applying(videoTransform)
