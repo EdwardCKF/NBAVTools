@@ -16,10 +16,14 @@ public class NBAsset {
     fileprivate var mutableVideoComposition: AVMutableVideoComposition
     fileprivate var videoTransform: CGAffineTransform = .identity
     fileprivate var videoRenderSize: CGSize = CGSize.zero
-    fileprivate var resolutionModel: String = AVAssetExportPreset1280x720
+    fileprivate var resolutionMode: String = AVAssetExportPreset1280x720
     fileprivate var exportSession: AVAssetExportSession?
     fileprivate var videoAudioMix: AVMutableAudioMix?
     fileprivate var videoMode: String = AVFileTypeMPEG4
+    
+    fileprivate var progressLink: CADisplayLink?
+    
+    fileprivate var _exportProgress: ((_ progress: CGFloat)->())?
     
     init(_ avAsset: AVAsset) {
         asset = avAsset
@@ -44,7 +48,14 @@ public class NBAsset {
         return self
     }
     
-    func videoMode(_ mode: String) -> NBAsset {
+    @discardableResult func resolutionMode(_ mode: String) -> NBAsset {
+        
+        resolutionMode = mode
+        
+        return self
+    }
+    
+    @discardableResult func videoMode(_ mode: String) -> NBAsset {
         
         videoMode = mode
         
@@ -58,21 +69,28 @@ public class NBAsset {
         return self
     }
     
-    func trim(progressRange range: Range<Double>) -> NBAsset {
+    @discardableResult func speed(_ speedMultiple: Double) -> NBAsset {
+        
+        _speed(speedMultiple)
+        
+        return self
+    }
+    
+    @discardableResult func trim(progressRange range: Range<Double>) -> NBAsset {
     
         _trim(progressRange: range)
         
         return self
     }
     
-    func stretchRender(_ size: CGSize) -> NBAsset {
+    @discardableResult func stretchRender(_ size: CGSize) -> NBAsset {
         
         _stretch(renderSize: videoRenderSize, toSize: size)
     
         return self
     }
     
-    func background(_ image: CGImage) -> NBAsset {
+    @discardableResult func background(_ image: CGImage) -> NBAsset {
         
         _background(image)
         
@@ -80,7 +98,7 @@ public class NBAsset {
     }
     
     func exportVideo(_ url: URL, handle: ((_ error: Error?)->())?) {
-        exportSession = AVAssetExportSession(asset: mutableComposition, presetName: resolutionModel)
+        exportSession = AVAssetExportSession(asset: mutableComposition, presetName: resolutionMode)
         exportSession?.videoComposition = mutableVideoComposition
         exportSession?.audioMix = videoAudioMix
         exportSession?.outputFileType = videoMode
@@ -102,8 +120,18 @@ public class NBAsset {
                     let error = NSError(domain: "Unusual error", code: 00002, userInfo: nil)
                     handle?(error)
                 }
+                self.EndObserverExportProgress()
             }
         }
+    }
+    
+    func exportProgress(_ progress: @escaping ((_ progress: CGFloat)->())) -> NBAsset {
+        
+        StartObserverExportProgress()
+        
+        _exportProgress = progress
+        
+        return self
     }
     
     fileprivate func getMutableComposition(_ asset: AVAsset, timeRange: CMTimeRange? = nil) -> AVMutableComposition {
@@ -194,7 +222,6 @@ extension NBAsset {
         videoTransform.ty = ty
         videoRenderSize = CGSize(width: absWidth, height: absHeight)
         
-//        processMutableVideoComposition()
     }
     
     fileprivate func _stretch(renderSize fromSize : CGSize, toSize: CGSize) {
@@ -218,7 +245,6 @@ extension NBAsset {
         
         videoRenderSize = CGSize(width: renderW, height: renderH)
         
-//        processMutableVideoComposition()
     }
     
     fileprivate func _background(_ image: CGImage) {
@@ -262,7 +288,6 @@ extension NBAsset {
         parentLayer.addSublayer(videoLayer)
         
         mutableVideoComposition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayer: videoLayer, in: parentLayer)
-//        processMutableVideoComposition()
     }
     
     fileprivate func _trim(progressRange range: Range<Double>) {
@@ -288,8 +313,46 @@ extension NBAsset {
         
         mutableComposition = getMutableComposition(mutableComposition, timeRange: timeRange)
     }
+    
+    fileprivate func _speed(_ speedMultiple: Double) {
+        
+        let timeRange = CMTimeRangeMake(kCMTimeZero, mutableComposition.duration)
+        let scaleTimeValue = Double(mutableComposition.duration.value)/speedMultiple
+        let scaleTime = CMTime(value: CMTimeValue(scaleTimeValue), timescale: mutableComposition.duration.timescale)
+        
+        for videoTrack in mutableComposition.tracks(withMediaType: AVMediaTypeVideo) {
+            videoTrack.scaleTimeRange(timeRange, toDuration: scaleTime)
+        }
+        
+        for audioTrack in mutableComposition.tracks(withMediaType: AVMediaTypeAudio) {
+            audioTrack.scaleTimeRange(timeRange, toDuration: scaleTime)
+        }
+    }
 }
 
+//Private function
+extension NBAsset {
+    
+    fileprivate func StartObserverExportProgress() {
+        progressLink = CADisplayLink(target: self, selector: #selector(ExportProgressRefresh))
+        progressLink?.frameInterval = 6
+        progressLink?.add(to: RunLoop.current, forMode: .commonModes)
+    }
+    
+    @objc fileprivate func ExportProgressRefresh() {
+        guard let export = exportSession else {
+            return
+        }
+        
+        let progress = export.progress
+        _exportProgress?(CGFloat(progress))
+    }
+    
+    fileprivate func EndObserverExportProgress() {
+        progressLink?.invalidate()
+        progressLink = nil
+    }
+}
 
 
 

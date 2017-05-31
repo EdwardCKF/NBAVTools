@@ -35,8 +35,8 @@ class ViewController: UIViewController {
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-
-        testForNBAll()
+//        testForNBAll()
+        demoForSpeed()
     }
     
     func testForNBAll() {
@@ -63,33 +63,6 @@ class ViewController: UIViewController {
         }
     }
     
-    func testForNBRotate() {
-        
-        let destinationPath = Tools.getTempVideoPath()
-        let destinationURL = URL(fileURLWithPath: destinationPath)
-        let videoURL = Bundle.main.url(forResource: "5", withExtension: "m4v")!
-        asset = AVAsset(url: videoURL)
-        let cgImage = try? asset?.getImage(fromTime: 0.1).applyBlur(20).cgImage
-
-        asset?.nb
-            
-            .trim(progressRange: Range(uncheckedBounds: (lower: 0.5, upper: 1)))
-            
-            .rotate(90)
-            
-            .stretchRender(view.bounds.size)
-            
-            .background(cgImage!!)
-            
-            .exportVideo(destinationURL) {[weak self] (error) in
-                
-                if let err = error {
-                    debugPrint("error: \(err)")
-                } else {
-                    self?.alertForSaveVideo(videoPath: destinationPath)
-                }
-        }
-    }
     
     func demoForBackgroundFilter() {
         let destinationPath = Tools.getTempVideoPath()
@@ -210,10 +183,10 @@ class ViewController: UIViewController {
     func demoForSpeed() {
         let destinationPath = Tools.getTempVideoPath()
         let destinationURL = URL(fileURLWithPath: destinationPath)
-        let videoURL = Bundle.main.url(forResource: "5", withExtension: "m4v")!
+        let videoURL = Bundle.main.url(forResource: "121", withExtension: "MP4")!
         let videoAsset = AVAsset(url: videoURL)
         do {
-            let asset = try AVVideoSpeed.videoSpeedChange(videoAsset: videoAsset, speedMultiple: 3)
+            let asset = try AVVideoSpeed.videoSpeedChange(videoAsset: videoAsset, speedMultiple: 10)
             avCommand = AVExportCommand()
             _ = avCommand?.exportVideo(asset: asset, outputURL: destinationURL, handle: {[weak self] (error) in
                 if let err = error {
@@ -225,6 +198,7 @@ class ViewController: UIViewController {
         } catch {
             debugPrint(error)
         }
+
     }
     
     func demoForMerge() {
