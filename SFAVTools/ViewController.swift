@@ -35,8 +35,40 @@ class ViewController: UIViewController {
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        testForNBAll()
-        demoForSpeed()
+        
+        
+        
+        
+//        demoForReverse()
+//        demoForSpeed()
+        demoForShare()
+//        demoForMerge()
+//        merge()
+    }
+
+    
+    func demoForShare() {
+        
+        let destinationPath = Tools.getTempVideoPath()
+        
+        let startTime = Date()
+        let videoURL = Bundle.main.url(forResource: "5_1", withExtension: "mp4")!
+        let videoAsset = AVAsset(url: videoURL)
+        let m = ShareVideoManager(videoAsset: videoAsset)
+        m.outputPath = destinationPath
+        m.exportShareVideo(rate: 4, audioAsset: nil) { (error) in
+            if let err = error {
+                debugPrint("---------------:\(err)")
+            } else {
+                debugPrint("success:\(Date().timeIntervalSince(startTime))")
+            }
+            
+            if let err = error {
+                debugPrint("error: \(err)")
+            } else {
+                self.alertForSaveVideo(videoPath: destinationPath)
+            }
+        }
     }
     
     func testForNBAll() {
@@ -183,48 +215,63 @@ class ViewController: UIViewController {
     func demoForSpeed() {
         let destinationPath = Tools.getTempVideoPath()
         let destinationURL = URL(fileURLWithPath: destinationPath)
-        let videoURL = Bundle.main.url(forResource: "121", withExtension: "MP4")!
+        let videoURL = Bundle.main.url(forResource: "swing1", withExtension: "mp4")!
         let videoAsset = AVAsset(url: videoURL)
-        do {
-            let asset = try AVVideoSpeed.videoSpeedChange(videoAsset: videoAsset, speedMultiple: 10)
-            avCommand = AVExportCommand()
-            _ = avCommand?.exportVideo(asset: asset, outputURL: destinationURL, handle: {[weak self] (error) in
-                if let err = error {
-                    debugPrint(err)
-                } else {
-                    self?.alertForSaveVideo(videoPath: destinationPath)
-                }
-            })
-        } catch {
-            debugPrint(error)
-        }
 
+        videoAsset.nb.startProcessVideo { (maker) in
+            maker.speed(3)
+        }.exportVideo(destinationURL) { (error) in
+            if let err = error {
+                debugPrint(err)
+            } else {
+                self.alertForSaveVideo(videoPath: destinationPath)
+            }
+
+        }
     }
     
     func demoForMerge() {
         let destinationPath = Tools.getTempVideoPath()
         let destinationURL = URL(fileURLWithPath: destinationPath)
         
-        do {
-            let asset = try AVVideoMerge.videoMerge(videoAsset: loadData())
-            avCommand = AVExportCommand()
-            _ = avCommand?.exportVideo(asset: asset, outputURL: destinationURL, handle: {[weak self] (error) in
+//        do {
+//            let asset = try AVVideoMerge.videoMerge(videoAsset: loadData())
+//            avCommand = AVExportCommand()
+//            _ = avCommand?.exportVideo(asset: asset, outputURL: destinationURL, handle: {[weak self] (error) in
+//                if let err = error {
+//                    debugPrint(err)
+//                } else {
+//                    self?.alertForSaveVideo(videoPath: destinationPath)
+//                }
+//            })
+//        } catch {
+//        }
+
+        var assets = loadData()
+        let asset = assets.first
+        assets.remove(at: 0)
+        
+        asset?.nb.startProcessVideo({ (maker) in
+            maker.add(assets)
+        })
+            .exportProgress({ (progress) in
+                debugPrint("progress--\(progress)")
+            })
+            .exportVideo(destinationURL, handle: { (error) in
                 if let err = error {
                     debugPrint(err)
                 } else {
-                    self?.alertForSaveVideo(videoPath: destinationPath)
+                    self.alertForSaveVideo(videoPath: destinationPath)
                 }
+                
             })
-        } catch {
-        }
-        
     }
     
     func demoForReverse() {
         
         let destinationPath = Tools.getTempVideoPath()
         let destinationURL = URL(fileURLWithPath: destinationPath)
-        let videoURL = Bundle.main.url(forResource: "5", withExtension: "m4v")!
+        let videoURL = Bundle.main.url(forResource: "swing1", withExtension: "mp4")!
         let videoAsset = AVAsset(url: videoURL)
         
         do {

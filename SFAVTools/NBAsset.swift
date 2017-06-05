@@ -16,10 +16,11 @@ public class NBAsset {
     fileprivate var mutableVideoComposition: AVMutableVideoComposition
     fileprivate var videoTransform: CGAffineTransform = .identity
     fileprivate var videoRenderSize: CGSize = CGSize.zero
-    fileprivate var resolutionMode: String = AVAssetExportPreset1280x720
+    fileprivate var resolutionMode: String = AVAssetExportPresetHighestQuality
     fileprivate var exportSession: AVAssetExportSession?
     fileprivate var videoAudioMix: AVMutableAudioMix?
-    fileprivate var videoMode: String = AVFileTypeMPEG4
+    fileprivate var videoMode: String = AVFileTypeQuickTimeMovie
+    fileprivate var videoFPS: Float = 30
     
     fileprivate var progressLink: CADisplayLink?
     
@@ -37,6 +38,7 @@ public class NBAsset {
         mutableComposition = getMutableComposition(asset)
         videoTransform = getDefultTransform()
         videoRenderSize = getDefultRenderSize()
+        videoFPS = getDefultFPS()
     }
     
     func startProcessVideo(_ closure: ((_ make: NBAsset)->())) -> NBAsset {
@@ -51,6 +53,13 @@ public class NBAsset {
     @discardableResult func resolutionMode(_ mode: String) -> NBAsset {
         
         resolutionMode = mode
+        
+        return self
+    }
+    
+    @discardableResult func fps(_ fps: Float) -> NBAsset {
+        
+        videoFPS = fps
         
         return self
     }
@@ -97,12 +106,34 @@ public class NBAsset {
         return self
     }
     
+    @discardableResult func add(_ assets: [AVAsset]) -> NBAsset {
+        
+        _add(assets)
+    
+        return self
+    }
+    
+    @discardableResult func insert(_ audio: AVAsset) -> NBAsset {
+        
+        _insert(audio: audio)
+        
+        return self
+    }
+    
+    @discardableResult func watermarks(_ watermarks: [CALayer]) -> NBAsset {
+    
+        _watermark(watermarks)
+    
+        return self
+    }
+    
     func exportVideo(_ url: URL, handle: ((_ error: Error?)->())?) {
         exportSession = AVAssetExportSession(asset: mutableComposition, presetName: resolutionMode)
         exportSession?.videoComposition = mutableVideoComposition
         exportSession?.audioMix = videoAudioMix
         exportSession?.outputFileType = videoMode
         exportSession?.outputURL = url
+        exportSession?.shouldOptimizeForNetworkUse = true
         exportSession?.exportAsynchronously {
             guard let state = self.exportSession?.status else {
                 return
@@ -184,6 +215,13 @@ public class NBAsset {
         }
         return videoTrack.preferredTransform
     }
+    
+    private func getDefultFPS() -> Float {
+        guard let videoTrack = asset.tracks(withMediaType: AVMediaTypeVideo).first else {
+            return 30
+        }
+        return videoTrack.nominalFrameRate
+    }
 }
 
 extension NBAsset {
@@ -203,8 +241,48 @@ extension NBAsset {
         instruction.layerInstructions = [layerInstruction]
         
         mutableVideoComposition.renderSize = videoRenderSize
-        mutableVideoComposition.frameDuration = videoTrack.minFrameDuration
+        mutableVideoComposition.frameDuration = CMTime(value: CMTimeValue(1), timescale: CMTimeScale(videoFPS))
         mutableVideoComposition.instructions = [instruction]
+    }
+    
+    fileprivate func _add(_ assets: [AVAsset]) {
+        
+        var totalDuration: CMTime = mutableComposition.duration
+        
+        for asset in assets {
+            
+            let timeRange = CMTimeRangeMake(kCMTimeZero, asset.duration)
+            
+            var videoTrack: AVMutableCompositionTrack? = mutableComposition.tracks(withMediaType: AVMediaTypeVideo).first
+            var audioTrack: AVMutableCompositionTrack? = mutableComposition.tracks(withMediaType: AVMediaTypeAudio).first
+            
+            for assetVideoTrack in asset.tracks(withMediaType: AVMediaTypeVideo) {
+                
+                if videoTrack == nil {
+                    videoTrack = mutableComposition.addMutableTrack(withMediaType: AVMediaTypeVideo, preferredTrackID: kCMPersistentTrackID_Invalid)
+                }
+                
+                do {
+                    try videoTrack?.insertTimeRange(timeRange, of: assetVideoTrack, at: totalDuration)
+                } catch {
+                }
+            }
+            
+            for assetAudioTrack in asset.tracks(withMediaType: AVMediaTypeAudio) {
+                
+                if audioTrack == nil {
+                    audioTrack = mutableComposition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid)
+                }
+                
+                do {
+                    try audioTrack?.insertTimeRange(timeRange, of: assetAudioTrack, at: totalDuration)
+                } catch {
+                }
+            }
+            
+            totalDuration = CMTimeAdd(totalDuration, asset.duration)
+        }
+        
     }
     
     fileprivate func _rotate(_ angle: Double) {
@@ -267,7 +345,6 @@ extension NBAsset {
         //Set layers
         let parentLayer = CALayer()
         parentLayer.frame = CGRect(x: 0, y: 0, width: renderSize.width, height: renderSize.height)
-        parentLayer.backgroundColor = UIColor.blue.cgColor
         
         let imageLayer = CALayer()
         imageLayer.frame = parentLayer.bounds
@@ -275,7 +352,6 @@ extension NBAsset {
         
         let videoLayer = CALayer()
         videoLayer.frame = CGRect(x: 0, y: 0, width: renderSize.width, height: renderSize.height)
-        videoLayer.backgroundColor = UIColor.yellow.cgColor
         
         let shapeLayer = CAShapeLayer()
         let aPath = UIBezierPath(rect: CGRect(origin: maskPoint, size: naturalSize))
@@ -326,6 +402,46 @@ extension NBAsset {
         
         for audioTrack in mutableComposition.tracks(withMediaType: AVMediaTypeAudio) {
             audioTrack.scaleTimeRange(timeRange, toDuration: scaleTime)
+        }
+    }
+    
+    fileprivate func _watermark(_ watermarks: [CALayer]) {
+        
+        let renderSize = videoRenderSize
+        
+        let parentLayer = CALayer()
+        parentLayer.frame = CGRect(x: 0, y: 0, width: renderSize.width, height: renderSize.height)
+        
+        let videoLayer = CALayer()
+        videoLayer.frame = parentLayer.bounds
+        
+        let watermarkLayer = CALayer()
+        watermarkLayer.frame = parentLayer.bounds
+        
+        parentLayer.addSublayer(videoLayer)
+        parentLayer.addSublayer(watermarkLayer)
+        
+        for watermark in watermarks {
+            watermarkLayer.addSublayer(watermark)
+        }
+        
+        mutableVideoComposition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayer: videoLayer, in: parentLayer)
+    }
+    
+    fileprivate func _insert(audio: AVAsset) {
+        
+        let timeRange = CMTimeRangeMake(kCMTimeZero, mutableComposition.duration)
+        
+        var audioTrack: AVMutableCompositionTrack? = mutableComposition.tracks(withMediaType: AVMediaTypeAudio).first
+        
+        for assetAudioTrack in audio.tracks(withMediaType: AVMediaTypeAudio) {
+            if audioTrack == nil {
+                audioTrack = mutableComposition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid)
+            }
+            do {
+                try audioTrack?.insertTimeRange(timeRange, of: assetAudioTrack, at: kCMTimeZero)
+            } catch {
+            }
         }
     }
 }
