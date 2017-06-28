@@ -10,9 +10,22 @@ import AVFoundation
 import UIKit
 
 class NBImageVideoMaker {
-    
-    
-    class func createVideo(fromImages images: [NBVideoImage], destination: String, videoSize: CGSize, finishHandle: (()->())?) throws {
+
+    class func createVideo(fromImages images: [NBVideoImage], destination: String, videoSize: CGSize, progressHandle: ((_ progress: Double)->())?, finishHandle: ((_ error: Error?)->())?) {
+        
+        func setProgress(_ progress: Double) {
+            DispatchQueue.main.async {
+                progressHandle?(progress)
+            }
+        }
+        
+        func setFinished(_ error: Error?) {
+            DispatchQueue.main.async {
+                finishHandle?(error)
+            }
+        }
+            
+        setProgress(0)
         
         let videoWriter: AVAssetWriter
         
@@ -20,7 +33,8 @@ class NBImageVideoMaker {
         do {
             videoWriter = try AVAssetWriter(url: videoURL, fileType: AVFileTypeMPEG4)
         } catch {
-            throw error
+            setFinished(error)
+            return
         }
         
         let videoSetting: [String: Any]
@@ -38,12 +52,17 @@ class NBImageVideoMaker {
         
         videoWriter.add(writerInput)
         
+        let fisrtProgress: Double = 0.05
+        setProgress(fisrtProgress)
+        
         videoWriter.startWriting()
         videoWriter.startSession(atSourceTime: kCMTimeZero)
         
         var buffer: CVPixelBuffer?
         if adaptor.pixelBufferPool == nil {
-            throw NSError(domain: "Edward pixelBufferPool is NULL", code: 00002, userInfo: nil)
+            let error: NSError = NSError(domain: "Edward pixelBufferPool is NULL", code: 00002, userInfo: nil)
+            setFinished(error)
+            return
         }
         
         CVPixelBufferPoolCreatePixelBuffer(nil, adaptor.pixelBufferPool!, &buffer)
@@ -51,6 +70,7 @@ class NBImageVideoMaker {
         let defaultFPS: CMTimeScale = 24
         var presentTime: CMTime = CMTime(value: -1, timescale: defaultFPS)
         
+        var writeProgress: Double = 0
         for i in 0..<images.count {
             
             autoreleasepool{
@@ -83,13 +103,15 @@ class NBImageVideoMaker {
                 }
                 
             }
-            
+            writeProgress = Double(i + 1) / Double(images.count) * 0.9 + fisrtProgress
+            setProgress(writeProgress)
         }
         
         writerInput.markAsFinished()
         
         videoWriter.finishWriting {
-            finishHandle?()
+            setProgress(1)
+            setFinished(nil)
         }
         
     }

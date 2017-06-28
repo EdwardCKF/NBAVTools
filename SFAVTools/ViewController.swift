@@ -12,37 +12,90 @@ import AVFoundation
 
 class ViewController: UIViewController {
     
-    var avCommand: AVExportCommand?
-    var avReverse: AVVideoReverse?
-    var testView: UIView?
-    var asset: AVAsset?
+    var startButton: UIButton?
+    var progressLabel: UILabel?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let blurImage = UIImage(named: "Snip20170518_3")!.applyBlur(20)
-        let cgImage = blurImage.cgImage!
-        let iamgeLayer = AVVideoBackgroundFilter.createLayer(view.frame.size, image: cgImage)
-        view.layer.addSublayer(iamgeLayer)
-        
         setupUI()
     }
-    
-    func setupUI() {
-        testView = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 200))
-        testView?.center = view.center
-        testView?.backgroundColor = UIColor.red
-        view.addSubview(testView!)
-    }
 
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        demoForNB()
+    private func setupUI() {
+        
+        startButton = UIButton()
+        startButton?.frame = CGRect(x: 0, y: 0, width: 100, height: 50)
+        startButton?.center = view.center
+        startButton?.setTitle("Start", for: .normal)
+        startButton?.backgroundColor = UIColor.red
+        startButton?.addTarget(self, action: #selector(ViewController.startButtonDidClick(_:)), for: .touchUpInside)
+        view.addSubview(startButton!)
+        
+        progressLabel = UILabel()
+        progressLabel?.frame = CGRect(x: 0, y: 64, width: SCREEN_WIDTH, height: 50)
+        progressLabel?.textColor = UIColor.black
+        progressLabel?.textAlignment = .center
+        progressLabel?.backgroundColor = UIColor.gray
+        view.addSubview(progressLabel!)
+    }
+    
+    func startButtonDidClick(_ sender: UIButton) {
+        
+        //        demoForNB()
+        demoForCreateVideoFromImages()
     }
 
 }
 
 //MARK: Demo
 extension ViewController {
+    
+    func demoForCreateVideoFromImages() {
+        
+        func loadNBImages() -> [NBVideoImage] {
+            var images: [NBVideoImage] = [NBVideoImage]()
+            for i in 1...110 {
+                
+                let numStr: String = String(format: "%03d", i)
+                let imageName: String = "login_back_images.bundle/\(numStr).jpg"
+                if let image: CGImage = UIImage(named: imageName)?.cgImage {
+                    //time是每一帧的时间点,不填默认跟随24fps.
+                    let time: CMTime = CMTime(value: CMTimeValue((i-1) * 3), timescale: 30)
+                    let nbImage: NBVideoImage = NBVideoImage(cgImage: image, time: time)
+                    images.append(nbImage)
+                }
+            }
+            
+            return images
+        }
+        
+        let startDate: Date = Date()
+        
+        DispatchQueue.global().async {
+            
+            let tempPath: String = Tools.getTempVideoPath()
+            
+            let nbImages: [NBVideoImage] = loadNBImages()
+            
+            let videoSize: CGSize = UIScreen.main.bounds.size
+            
+            NBImageVideoMaker.createVideo(fromImages: nbImages, destination: tempPath, videoSize: videoSize, progressHandle: {[weak self] progress in
+                let progressStr: String = String(format: "%d%%", Int(progress * 100))
+                debugPrint(progressStr)
+                self?.progressLabel?.text = progressStr
+                
+            }) { [weak self] error in
+                
+                debugPrint("timeEnd----------:\(Date().timeIntervalSince(startDate))")
+                
+                if let err = error {
+                    debugPrint("demoForCreateVideoFromImages error: \(err)")
+                } else {
+                    self?.alertForSaveVideo(videoPath: tempPath)
+                }
+            }
+        }
+    }
     
     func demoForNB() {
         
