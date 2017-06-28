@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Photos
 import AVFoundation
 
 class ViewController: UIViewController {
@@ -35,254 +36,32 @@ class ViewController: UIViewController {
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        
-        
-        
-//        demoForReverse()
-//        demoForSpeed()
-        demoForShare()
-//        demoForMerge()
-//        merge()
+
     }
 
+}
+
+//MARK: Demo
+extension ViewController {
     
-    func demoForShare() {
-        
-        let destinationPath = Tools.getTempVideoPath()
-        
-        let startTime = Date()
+    
+    func testForSaveVideoToAlbum() {
         let videoURL = Bundle.main.url(forResource: "5_1", withExtension: "mp4")!
-        let videoAsset = AVAsset(url: videoURL)
-        let m = ShareVideoManager(videoAsset: videoAsset)
-        m.outputPath = destinationPath
-        m.exportShareVideo(rate: 4, audioAsset: nil) { (error) in
-            if let err = error {
-                debugPrint("---------------:\(err)")
-            } else {
-                debugPrint("success:\(Date().timeIntervalSince(startTime))")
-            }
+        UISaveVideoAtPathToSavedPhotosAlbum(videoURL.path, nil, nil, nil)
+        PHPhotoLibrary.shared().performChanges({
             
-            if let err = error {
-                debugPrint("error: \(err)")
-            } else {
-                self.alertForSaveVideo(videoPath: destinationPath)
-            }
-        }
-    }
-    
-    func testForNBAll() {
-    
-        let destinationPath = Tools.getTempVideoPath()
-        let destinationURL = URL(fileURLWithPath: destinationPath)
-        let videoURL = Bundle.main.url(forResource: "5", withExtension: "m4v")!
-        asset = AVAsset(url: videoURL)
-        let cgImage = try? asset?.getImage(fromTime: 0.1).applyBlur(20).cgImage
-        
-        asset?.nb.startProcessVideo { (make) in
+            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: videoURL)
             
-            make.trim(progressRange: Range(uncheckedBounds: (lower: 0.5, upper: 2)))
-            make.rotate(90)
-            make.stretchRender(view.frame.size)
-            make.background(cgImage!!)
-            
-        }.exportVideo(destinationURL) {[weak self] (error) in
-            if let err = error {
-                debugPrint("error: \(err)")
-            } else {
-                self?.alertForSaveVideo(videoPath: destinationPath)
-            }
+        }) { (b, err) in
+            print(b)
         }
+        
     }
-    
-    
-    func demoForBackgroundFilter() {
-        let destinationPath = Tools.getTempVideoPath()
-        let destinationURL = URL(fileURLWithPath: destinationPath)
-        let videoURL = Bundle.main.url(forResource: "heng", withExtension: "MOV")!
-        let videoAsset = AVAsset(url: videoURL)
-        
-        do {
-            let image = try videoAsset.getImage(fromTime: 0.1)
-            let cgImage = image.applyBlur(20).cgImage!
-            let videoComposition = try AVVideoBackgroundFilter.videoProcess(videoAsset: videoAsset, image: cgImage)
-            avCommand = AVExportCommand()
-            avCommand?.videoComposition = videoComposition.1
-            _ = avCommand?.exportVideo(asset: videoComposition.0, outputURL: destinationURL, handle: {[weak self] (error) in
-                if let err = error {
-                    debugPrint(err)
-                } else {
-                    self?.alertForSaveVideo(videoPath: destinationPath)
-                }
-                self?.avCommand = nil
-            })
-        } catch {
-            debugPrint("添加背景失败:\(error)")
-        }
-    }
-    
-    
-    var index: Int = 0
-    func testForTransform() {
-        
-        func degree(_ degree: Double) -> CGFloat {
-            return CGFloat(degree / 180 * Double.pi)
-        }
-        
-        let t1 = CGAffineTransform.identity
-        let t2 = t1.rotated(by: degree(90))
-        let t3 = t1.rotated(by: degree(180))
-        let t4 = t1.rotated(by: degree(270))
-        let t5 = t1.rotated(by: degree(360))
-        let t6 = t1.rotated(by: degree(450))
-        let t7 = t1.rotated(by: degree(540))
-        
-        let ts = [t1,t2,t3,t4,t5,t6,t7]
-        
-        if index >= ts.count {
-            index = 0
-        }
-        let currnetTransform = ts[index]
-        print("currentIndex: \(index)")
-        print("currnetTransform:\(currnetTransform)")
-        let size = CGSize(width: 100, height: 200)
-        print(size.applying(currnetTransform))
-        testView?.transform = currnetTransform
-        index += 1
-        
-        let t10 = t1.rotated(by: degree(90))
-        let b = t10 == currnetTransform
-        print(b)
-    
-    }
-    
-    func testForAllFoundation() {
-        
-        func reverse(_ path: String ) {
-            let destinationPath = Tools.getTempVideoPath()
-            let destinationURL = URL(fileURLWithPath: destinationPath)
-            let asset = AVAsset(url: URL(fileURLWithPath: path))
-            
-            avReverse = AVVideoReverse()
-            try? avReverse?.videoReverse(videoAsset: asset, outputURL: destinationURL, fileType: nil, finished: { [weak self] in
-                self?.alertForSaveVideo(videoPath: destinationPath)
-            })
-        }
-        
-        let destinationPath = Tools.getTempVideoPath()
-        let destinationURL = URL(fileURLWithPath: destinationPath)
-        
-        do {
-            let mergeAsset = try AVVideoMerge.videoMerge(videoAsset: loadData())
-            let speedAsset = try AVVideoSpeed.videoSpeedChange(videoAsset: mergeAsset, speedMultiple: 3)
-            let rotateAssetTuple = try AVVideoRotate.videoRotate(videoAsset: speedAsset, rotationAngle: 90)
-            avCommand = AVExportCommand()
-            avCommand?.videoComposition = rotateAssetTuple.1
-            _ = avCommand?.exportVideo(asset: rotateAssetTuple.0, outputURL: destinationURL, handle: { (error) in
-                if let err = error {
-                    debugPrint(err)
-                } else {
-                    reverse(destinationPath)
-                }
-            })
-        } catch {
-        }
-    }
-    
-    func demoForRotate() {
-        let destinationPath = Tools.getTempVideoPath()
-        let destinationURL = URL(fileURLWithPath: destinationPath)
-        let videoURL = Bundle.main.url(forResource: "5", withExtension: "m4v")!
-        let videoAsset = AVAsset(url: videoURL)
-        
-        do {
-            let videoComposition = try AVVideoRotate.videoRotate(videoAsset: videoAsset, rotationAngle: 90)
-            avCommand = AVExportCommand()
-            avCommand?.videoComposition = videoComposition.1
-            _ = avCommand?.exportVideo(asset: videoComposition.0, outputURL: destinationURL, handle: {[weak self] (error) in
-                if let err = error {
-                    debugPrint(err)
-                } else {
-                    self?.alertForSaveVideo(videoPath: destinationPath)
-                }
-                self?.avCommand = nil
-            })
-        } catch {
-            debugPrint("转换方向失败:\(error)")
-        }
-    }
-    
-    func demoForSpeed() {
-        let destinationPath = Tools.getTempVideoPath()
-        let destinationURL = URL(fileURLWithPath: destinationPath)
-        let videoURL = Bundle.main.url(forResource: "swing1", withExtension: "mp4")!
-        let videoAsset = AVAsset(url: videoURL)
 
-        videoAsset.nb.startProcessVideo { (maker) in
-            maker.speed(3)
-        }.exportVideo(destinationURL) { (error) in
-            if let err = error {
-                debugPrint(err)
-            } else {
-                self.alertForSaveVideo(videoPath: destinationPath)
-            }
+}
 
-        }
-    }
-    
-    func demoForMerge() {
-        let destinationPath = Tools.getTempVideoPath()
-        let destinationURL = URL(fileURLWithPath: destinationPath)
-        
-//        do {
-//            let asset = try AVVideoMerge.videoMerge(videoAsset: loadData())
-//            avCommand = AVExportCommand()
-//            _ = avCommand?.exportVideo(asset: asset, outputURL: destinationURL, handle: {[weak self] (error) in
-//                if let err = error {
-//                    debugPrint(err)
-//                } else {
-//                    self?.alertForSaveVideo(videoPath: destinationPath)
-//                }
-//            })
-//        } catch {
-//        }
-
-        var assets = loadData()
-        let asset = assets.first
-        assets.remove(at: 0)
-        
-        asset?.nb.startProcessVideo({ (maker) in
-            maker.add(assets)
-        })
-            .exportProgress({ (progress) in
-                debugPrint("progress--\(progress)")
-            })
-            .exportVideo(destinationURL, handle: { (error) in
-                if let err = error {
-                    debugPrint(err)
-                } else {
-                    self.alertForSaveVideo(videoPath: destinationPath)
-                }
-                
-            })
-    }
-    
-    func demoForReverse() {
-        
-        let destinationPath = Tools.getTempVideoPath()
-        let destinationURL = URL(fileURLWithPath: destinationPath)
-        let videoURL = Bundle.main.url(forResource: "swing1", withExtension: "mp4")!
-        let videoAsset = AVAsset(url: videoURL)
-        
-        do {
-            avReverse = AVVideoReverse()
-            try avReverse?.videoReverse(videoAsset: videoAsset, outputURL: destinationURL, fileType: nil) { [weak self] in
-                self?.alertForSaveVideo(videoPath: destinationPath)
-            }
-        } catch {
-            debugPrint(error)
-        }
-    }
+//MARK: Private Action
+extension ViewController {
     
     func alertForSaveVideo(videoPath path: String) {
         let alert = UIAlertController(title: "是否存入相册", message: nil, preferredStyle: .alert)
@@ -311,8 +90,6 @@ class ViewController: UIViewController {
         
         return [asset1,asset2,asset3,asset4]
     }
-    
-
 
 }
 

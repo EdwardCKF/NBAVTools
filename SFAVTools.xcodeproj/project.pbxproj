@@ -27,7 +27,6 @@
 		3C6714F11EDFFBB500290FB0 /* 5_3.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3C6714EE1EDFFBB500290FB0 /* 5_3.mp4 */; };
 		3C6714FE1EE01D6800290FB0 /* AVUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C6714FD1EE01D6800290FB0 /* AVUtilities.m */; };
 		3C692DF81EBC427E003005C6 /* AVVideoReverse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C692DF71EBC427E003005C6 /* AVVideoReverse.swift */; };
-		3C93FD2D1EE4F73E00DFC2AF /* ShareVideoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C93FD2C1EE4F73E00DFC2AF /* ShareVideoManager.swift */; };
 		3C93FD2F1EE506F800DFC2AF /* login_back_music.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C93FD2E1EE506F800DFC2AF /* login_back_music.mp3 */; };
 		3C93FD311EE50D0900DFC2AF /* reverse.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3C93FD301EE50D0900DFC2AF /* reverse.mp4 */; };
 		3CA9D98E1ECBF1F70044B670 /* AVVideoRotate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA9D98D1ECBF1F70044B670 /* AVVideoRotate.swift */; };
@@ -71,7 +70,6 @@
 		3C6714FD1EE01D6800290FB0 /* AVUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVUtilities.m; sourceTree = "<group>"; };
 		3C692DF71EBC427E003005C6 /* AVVideoReverse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVVideoReverse.swift; sourceTree = "<group>"; };
 		3C692DF91EBC56FF003005C6 /* SFAVTools-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SFAVTools-Bridging-Header.h"; sourceTree = "<group>"; };
-		3C93FD2C1EE4F73E00DFC2AF /* ShareVideoManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareVideoManager.swift; sourceTree = "<group>"; };
 		3C93FD2E1EE506F800DFC2AF /* login_back_music.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = login_back_music.mp3; sourceTree = "<group>"; };
 		3C93FD301EE50D0900DFC2AF /* reverse.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = reverse.mp4; sourceTree = "<group>"; };
 		3CA9D98D1ECBF1F70044B670 /* AVVideoRotate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVVideoRotate.swift; sourceTree = "<group>"; };
@@ -151,7 +149,6 @@
 			children = (
 				3CAF98201EBC1BCE00D8DA5E /* AppDelegate.swift */,
 				3CAF98221EBC1BCE00D8DA5E /* ViewController.swift */,
-				3C93FD2C1EE4F73E00DFC2AF /* ShareVideoManager.swift */,
 				3CAF98321EBC1C1100D8DA5E /* AVVideoMerge.swift */,
 				3CAF98501EBC3E1300D8DA5E /* AVVideoSpeed.swift */,
 				3CA9D98D1ECBF1F70044B670 /* AVVideoRotate.swift */,
@@ -315,7 +312,6 @@
 				3CA9D98E1ECBF1F70044B670 /* AVVideoRotate.swift in Sources */,
 				3C52B3821ECE968C00B9687D /* NBAsset.swift in Sources */,
 				3CD5106F1ECDACCF00B40746 /* AVAsset+Extension.swift in Sources */,
-				3C93FD2D1EE4F73E00DFC2AF /* ShareVideoManager.swift in Sources */,
 				3C52B3A91ECF07D900B9687D /* NBMaker.swift in Sources */,
 				3CAF98511EBC3E1300D8DA5E /* AVVideoSpeed.swift in Sources */,
 				3CAF98231EBC1BCE00D8DA5E /* ViewController.swift in Sources */,

@@ -127,7 +127,7 @@ public class NBAsset {
         return self
     }
     
-    func exportVideo(_ url: URL, handle: ((_ error: Error?)->())?) {
+    func exportVideo(_ url: URL, handle: ((_ error: Error?)->())?) -> AVAssetExportSession {
         exportSession = AVAssetExportSession(asset: mutableComposition, presetName: resolutionMode)
         exportSession?.videoComposition = mutableVideoComposition
         exportSession?.audioMix = videoAudioMix
@@ -154,6 +154,7 @@ public class NBAsset {
                 self.EndObserverExportProgress()
             }
         }
+        return exportSession!
     }
     
     func exportProgress(_ progress: @escaping ((_ progress: CGFloat)->())) -> NBAsset {
@@ -286,20 +287,29 @@ extension NBAsset {
     }
     
     fileprivate func _rotate(_ angle: Double) {
-
+        
         let _angle = Double(Int64(fabs(angle)) % 360)
-        let degree = Degree(_angle)
+        let degree: CGFloat = Degree(_angle)
         //transform processing
         videoTransform = videoTransform.rotated(by: CGFloat(degree))
-        let applySize = videoRenderSize.applying(videoTransform)
-        let absWidth = CGFloat(fabs(Double(applySize.width)))
-        let absHeight = CGFloat(fabs(Double(applySize.height)))
-        let tx = applySize.width >= 0 ? 0 : absWidth
-        let ty = applySize.height >= 0 ? 0 : absHeight
+        let applySize: CGSize = videoRenderSize.applying(videoTransform)
+        let absWidth: CGFloat = CGFloat(fabs(Double(applySize.width)))
+        let absHeight: CGFloat = CGFloat(fabs(Double(applySize.height)))
+        let tx: CGFloat
+        let ty: CGFloat
+        if applySize.width >= 0 {
+            tx = 0
+        } else {
+            tx = absWidth
+        }
+        if applySize.height >= 0 {
+            ty = 0
+        } else {
+            ty = absHeight
+        }
         videoTransform.tx = tx
         videoTransform.ty = ty
         videoRenderSize = CGSize(width: absWidth, height: absHeight)
-        
     }
     
     fileprivate func _stretch(renderSize fromSize : CGSize, toSize: CGSize) {
