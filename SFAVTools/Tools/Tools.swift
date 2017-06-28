@@ -11,6 +11,10 @@ import AVFoundation
 
 class Tools {
     
+    class func getTempVideoURL() -> URL {
+        return URL(fileURLWithPath: getTempVideoPath())
+    }
+    
     class func getTempVideoPath() -> String {
         let tempFP = NSTemporaryDirectory()
         let time = "\(Int(Date().timeIntervalSince1970))"

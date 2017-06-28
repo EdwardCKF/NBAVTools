@@ -36,7 +36,7 @@ class ViewController: UIViewController {
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-
+        demoForNB()
     }
 
 }
@@ -44,6 +44,40 @@ class ViewController: UIViewController {
 //MARK: Demo
 extension ViewController {
     
+    func demoForNB() {
+        
+        guard let video1URL: URL = Bundle.main.url(forResource: "5_1", withExtension: "mp4") else {
+            return
+        }
+        guard let video2URL: URL = Bundle.main.url(forResource: "5_2", withExtension: "mp4") else {
+            return
+        }
+        
+        let output: URL = Tools.getTempVideoURL()
+        
+        let asset1: AVAsset = AVAsset(url: video1URL)
+        let asset2: AVAsset = AVAsset(url: video2URL)
+        
+        let _ = asset1.nb.startProcessVideo { (maker) in
+            
+            maker.add([asset2])
+            .fps(30)
+            .rotate(90)
+            .resolutionMode(AVAssetExportPreset1280x720)
+            .speed(1.5)
+        }
+        .exportProgress { (progress) in
+            print("progress:\(progress)")
+        }
+        .exportVideo(output) {[weak self] (error) in
+            
+            if let err = error {
+                debugPrint("导出错误:\(err)")
+            } else {
+                self?.alertForSaveVideo(videoPath: output.path)
+            }
+        }
+    }
     
     func testForSaveVideoToAlbum() {
         let videoURL = Bundle.main.url(forResource: "5_1", withExtension: "mp4")!

@@ -30,7 +30,6 @@
 		3CAF98281EBC1BCF00D8DA5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3CAF98271EBC1BCF00D8DA5E /* Assets.xcassets */; };
 		3CAF982B1EBC1BCF00D8DA5E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CAF98291EBC1BCF00D8DA5E /* LaunchScreen.storyboard */; };
 		3CB248451ED52042005BD47C /* 121.MP4 in Resources */ = {isa = PBXBuildFile; fileRef = 3CB248441ED52042005BD47C /* 121.MP4 */; };
-		3CCED7F51F035DDF00544F45 /* AVAsset+NB+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCED7F31F035DDF00544F45 /* AVAsset+NB+Extension.swift */; };
 		3CCED7F61F035DDF00544F45 /* NBAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCED7F41F035DDF00544F45 /* NBAsset.swift */; };
 		3CCED8011F035E2B00544F45 /* AVExportCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCED7F81F035E2B00544F45 /* AVExportCommand.swift */; };
 		3CCED8021F035E2B00544F45 /* AVUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CCED7FA1F035E2B00544F45 /* AVUtilities.m */; };
@@ -40,6 +39,10 @@
 		3CCED8061F035E2B00544F45 /* AVVideoRotate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCED7FE1F035E2B00544F45 /* AVVideoRotate.swift */; };
 		3CCED8071F035E2B00544F45 /* AVVideoSpeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCED7FF1F035E2B00544F45 /* AVVideoSpeed.swift */; };
 		3CCED8081F035E2B00544F45 /* AVVideoTrim.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCED8001F035E2B00544F45 /* AVVideoTrim.swift */; };
+		3CCED80B1F035F1600544F45 /* NBImageVideoMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCED8091F035F1600544F45 /* NBImageVideoMaker.swift */; };
+		3CCED80C1F035F1600544F45 /* NBVideoImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCED80A1F035F1600544F45 /* NBVideoImage.swift */; };
+		3CCED8101F035F1F00544F45 /* AVAsset+NB+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCED80E1F035F1F00544F45 /* AVAsset+NB+Extension.swift */; };
+		3CCED8111F035F1F00544F45 /* CGImage+NB+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCED80F1F035F1F00544F45 /* CGImage+NB+Extension.swift */; };
 		3CD5106D1ECDACB400B40746 /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD5106C1ECDACB400B40746 /* Tools.swift */; };
 		3CD510711ECDB18700B40746 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD510701ECDB18700B40746 /* UIImage+Extension.swift */; };
 		3CD510781ECDBBC300B40746 /* UIImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CD510771ECDBBC300B40746 /* UIImageEffects.m */; };
@@ -72,7 +75,6 @@
 		3CAF982A1EBC1BCF00D8DA5E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3CAF982C1EBC1BCF00D8DA5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CB248441ED52042005BD47C /* 121.MP4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 121.MP4; sourceTree = "<group>"; };
-		3CCED7F31F035DDF00544F45 /* AVAsset+NB+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVAsset+NB+Extension.swift"; sourceTree = "<group>"; };
 		3CCED7F41F035DDF00544F45 /* NBAsset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBAsset.swift; sourceTree = "<group>"; };
 		3CCED7F81F035E2B00544F45 /* AVExportCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVExportCommand.swift; sourceTree = "<group>"; };
 		3CCED7F91F035E2B00544F45 /* AVUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVUtilities.h; sourceTree = "<group>"; };
@@ -83,6 +85,10 @@
 		3CCED7FE1F035E2B00544F45 /* AVVideoRotate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVVideoRotate.swift; sourceTree = "<group>"; };
 		3CCED7FF1F035E2B00544F45 /* AVVideoSpeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVVideoSpeed.swift; sourceTree = "<group>"; };
 		3CCED8001F035E2B00544F45 /* AVVideoTrim.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVVideoTrim.swift; sourceTree = "<group>"; };
+		3CCED8091F035F1600544F45 /* NBImageVideoMaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBImageVideoMaker.swift; sourceTree = "<group>"; };
+		3CCED80A1F035F1600544F45 /* NBVideoImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBVideoImage.swift; sourceTree = "<group>"; };
+		3CCED80E1F035F1F00544F45 /* AVAsset+NB+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVAsset+NB+Extension.swift"; sourceTree = "<group>"; };
+		3CCED80F1F035F1F00544F45 /* CGImage+NB+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGImage+NB+Extension.swift"; sourceTree = "<group>"; };
 		3CD5106C1ECDACB400B40746 /* Tools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
 		3CD510701ECDB18700B40746 /* UIImage+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
 		3CD510761ECDBBC300B40746 /* UIImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIImageEffects.h; sourceTree = "<group>"; };
@@ -161,8 +167,10 @@
 		3CCED7F21F035DDF00544F45 /* NBAsset */ = {
 			isa = PBXGroup;
 			children = (
-				3CCED7F31F035DDF00544F45 /* AVAsset+NB+Extension.swift */,
 				3CCED7F41F035DDF00544F45 /* NBAsset.swift */,
+				3CCED8091F035F1600544F45 /* NBImageVideoMaker.swift */,
+				3CCED80A1F035F1600544F45 /* NBVideoImage.swift */,
+				3CCED80D1F035F1F00544F45 /* extensions */,
 			);
 			path = NBAsset;
 			sourceTree = "<group>";
@@ -181,6 +189,15 @@
 				3CCED8001F035E2B00544F45 /* AVVideoTrim.swift */,
 			);
 			path = SingleAVTools;
+			sourceTree = "<group>";
+		};
+		3CCED80D1F035F1F00544F45 /* extensions */ = {
+			isa = PBXGroup;
+			children = (
+				3CCED80E1F035F1F00544F45 /* AVAsset+NB+Extension.swift */,
+				3CCED80F1F035F1F00544F45 /* CGImage+NB+Extension.swift */,
+			);
+			path = extensions;
 			sourceTree = "<group>";
 		};
 		3CD5106A1ECDACB400B40746 /* Tools */ = {
@@ -310,6 +327,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3CCED8111F035F1F00544F45 /* CGImage+NB+Extension.swift in Sources */,
 				3CD510711ECDB18700B40746 /* UIImage+Extension.swift in Sources */,
 				3CCED8021F035E2B00544F45 /* AVUtilities.m in Sources */,
 				3CD510781ECDBBC300B40746 /* UIImageEffects.m in Sources */,
@@ -321,10 +339,12 @@
 				3C52B3651ECE8C8900B9687D /* Constants.swift in Sources */,
 				3CCED8071F035E2B00544F45 /* AVVideoSpeed.swift in Sources */,
 				3CAF98211EBC1BCE00D8DA5E /* AppDelegate.swift in Sources */,
+				3CCED8101F035F1F00544F45 /* AVAsset+NB+Extension.swift in Sources */,
 				3CCED8031F035E2B00544F45 /* AVVideoBackgroundFilter.swift in Sources */,
+				3CCED80B1F035F1600544F45 /* NBImageVideoMaker.swift in Sources */,
+				3CCED80C1F035F1600544F45 /* NBVideoImage.swift in Sources */,
 				3CD5106D1ECDACB400B40746 /* Tools.swift in Sources */,
 				3CCED8051F035E2B00544F45 /* AVVideoReverse.swift in Sources */,
-				3CCED7F51F035DDF00544F45 /* AVAsset+NB+Extension.swift in Sources */,
 				3CCED8011F035E2B00544F45 /* AVExportCommand.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
