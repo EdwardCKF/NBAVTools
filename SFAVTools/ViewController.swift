@@ -77,7 +77,7 @@ extension ViewController {
             
             let nbImages: [NBVideoImage] = loadNBImages()
             
-            let videoSize: CGSize = UIScreen.main.bounds.size
+            let videoSize: CGSize = CGSize(width: 720, height: 1280)
             
             NBImageVideoMaker.createVideo(fromImages: nbImages, destination: tempPath, videoSize: videoSize, progressHandle: {[weak self] progress in
                 let progressStr: String = String(format: "%d%%", Int(progress * 100))
