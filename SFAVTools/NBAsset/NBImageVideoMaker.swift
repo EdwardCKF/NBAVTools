@@ -99,7 +99,7 @@ class NBImageVideoMaker {
         
     }
     
-    func append(pixelBuffer: CVPixelBuffer, inTime: CMTime) {
+    private func append(pixelBuffer: CVPixelBuffer, inTime: CMTime) {
         
         if writerInput == nil {
             return

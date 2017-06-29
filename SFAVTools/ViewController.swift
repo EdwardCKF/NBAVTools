@@ -80,23 +80,6 @@ extension ViewController {
     
     func demoForCreateVideoFromImages() {
         
-        func loadNBImages() -> [NBVideoImage] {
-            var images: [NBVideoImage] = [NBVideoImage]()
-            for i in 1...110 {
-                
-                let numStr: String = String(format: "%03d", i)
-                let imageName: String = "login_back_images.bundle/\(numStr).jpg"
-                if let image: CGImage = UIImage(named: imageName)?.cgImage {
-                    //time是每一帧的时间点,不填默认跟随24fps.
-                    let time: CMTime = CMTime(value: CMTimeValue((i-1) * 3), timescale: 30)
-                    let nbImage: NBVideoImage = NBVideoImage(cgImage: image, time: time)
-                    images.append(nbImage)
-                }
-            }
-            
-            return images
-        }
-        
         let tempPath: String = Tools.getTempVideoPath()
         let tempURL: URL = URL(fileURLWithPath: tempPath)
         
