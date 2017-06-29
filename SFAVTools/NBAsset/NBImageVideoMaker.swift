@@ -9,111 +9,176 @@
 import AVFoundation
 import UIKit
 
-class NBImageVideoMaker {
+protocol NBImageVideoMakerDelegate: class {
+    func imageVideoMaker(_ sender: NBImageVideoMaker, index: Int, currentTime: CMTime)
+    func imageVideoMakerFinished(_ sender: NBImageVideoMaker)
+    func imageVideoMakerError(_ sender: NBImageVideoMaker, error: Error)
+}
 
-    class func createVideo(fromImages images: [NBVideoImage], destination: String, videoSize: CGSize, progressHandle: ((_ progress: Double)->())?, finishHandle: ((_ error: Error?)->())?) {
+class NBImageVideoMaker {
+    
+    weak var delegate: NBImageVideoMakerDelegate?
+    
+    var size: CGSize = CGSize(width: 720, height: 1280)
+    var bitRate: Int = 1000000
+    var output: URL
+    var index: Int = 0
+    
+    private var videoWriter: AVAssetWriter?
+    private var writerInput: AVAssetWriterInput?
+    private var adaptor: AVAssetWriterInputPixelBufferAdaptor?
+    private var buffer: CVPixelBuffer?
+    private var presentTime: CMTime = CMTime()
+    private let appendQueue: DispatchQueue = DispatchQueue(label: "append queue")
+    private var isStart: Bool = false
+    
+    init(outputURL: URL) {
+        output = outputURL
+    }
+    
+    deinit {
+        debugPrint("NBImageVideoMaker  deinit")
+    }
+    
+    func start() {
         
-        func setProgress(_ progress: Double) {
-            DispatchQueue.main.async {
-                progressHandle?(progress)
-            }
-        }
+        let error = configerProperties()
         
-        func setFinished(_ error: Error?) {
-            DispatchQueue.main.async {
-                finishHandle?(error)
-            }
-        }
-            
-        setProgress(0)
-        
-        let videoWriter: AVAssetWriter
-        
-        let videoURL: URL = URL(fileURLWithPath: destination)
-        do {
-            videoWriter = try AVAssetWriter(url: videoURL, fileType: AVFileTypeMPEG4)
-        } catch {
-            setFinished(error)
+        if error != nil {
+            errorCallback(error!)
             return
         }
+        isStart = true
+        videoWriter?.startWriting()
+        videoWriter?.startSession(atSourceTime: kCMTimeZero)
+        
+        if adaptor?.pixelBufferPool == nil {
+            let error: NSError = NSError(domain: "Edward pixelBufferPool is NULL", code: 00002, userInfo: nil)
+            errorCallback(error)
+            return
+        }
+        
+        CVPixelBufferPoolCreatePixelBuffer(nil, adaptor!.pixelBufferPool!, &buffer)
+    }
+    
+    func end() {
+        isStart = false
+    
+        writerInput?.markAsFinished()
+        
+        videoWriter?.finishWriting { [weak self] in
+            self?.finishedCallback()
+        }
+    }
+    
+    func cancel() {
+        isStart = false
+        videoWriter?.cancelWriting()
+        writerInput?.markAsFinished()
+    }
+    
+    func append(image: NBVideoImage) {
+        
+        if !isStart {
+            return
+        }
+        
+        if let time = image.time {
+            presentTime = time
+        } else {
+            let value: CMTimeValue = presentTime.value + 1
+            let timeScale: CMTimeScale = presentTime.timescale
+            presentTime = CMTimeMake(value, timeScale)
+        }
+        
+        buffer = image.cgImage.getPixelBuffer(size: size)
+        
+        if buffer != nil {
+            append(pixelBuffer: buffer!, inTime: presentTime)
+        }
+        
+    }
+    
+    func append(pixelBuffer: CVPixelBuffer, inTime: CMTime) {
+        
+        if writerInput == nil {
+            return
+        }
+        
+        appendQueue.sync {
+            while writerInput!.isReadyForMoreMediaData == false {
+                if isStart == false {
+                    break
+                }
+                Thread.sleep(forTimeInterval: 0.1)
+                debugPrint("writerInput isReadyForMoreMediaData == false, sleep for 0.1 second")
+            }
+            
+            if let appendSuccess: Bool = self.adaptor?.append(pixelBuffer, withPresentationTime: inTime) {
+                
+                if appendSuccess == false {
+                    return
+                }
+            }
+            
+            self.indexCallback(self.index, time: inTime)
+            self.index += 1
+            
+        }
+        
+    }
+    
+    private func configerProperties() -> Error? {
+        
+        do {
+            videoWriter = try AVAssetWriter(url: output, fileType: AVFileTypeMPEG4)
+        } catch {
+            return error
+        }
+        
+        let compressionProperties: [String: Any]
+        compressionProperties = [AVVideoAverageBitRateKey: bitRate,
+                                 AVVideoAllowFrameReorderingKey: false
+        ]
         
         let videoSetting: [String: Any]
         videoSetting = [AVVideoCodecKey: AVVideoCodecH264,
-                        AVVideoWidthKey: videoSize.width,
-                        AVVideoHeightKey: videoSize.height
+                        AVVideoScalingModeKey: AVVideoScalingModeResizeAspectFill,
+                        AVVideoWidthKey: size.width,
+                        AVVideoHeightKey: size.height,
+                        AVVideoCompressionPropertiesKey: compressionProperties
         ]
         
-        let writerInput: AVAssetWriterInput
         writerInput = AVAssetWriterInput(mediaType: AVMediaTypeVideo, outputSettings: videoSetting)
         
-        let adaptor: AVAssetWriterInputPixelBufferAdaptor
-        adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writerInput, sourcePixelBufferAttributes: nil)
+        adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writerInput!, sourcePixelBufferAttributes: nil)
         
+        videoWriter?.add(writerInput!)
         
-        videoWriter.add(writerInput)
+        presentTime = CMTime(value: -1, timescale: 24)
         
-        let fisrtProgress: Double = 0.05
-        setProgress(fisrtProgress)
+        index = 0
         
-        videoWriter.startWriting()
-        videoWriter.startSession(atSourceTime: kCMTimeZero)
-        
-        var buffer: CVPixelBuffer?
-        if adaptor.pixelBufferPool == nil {
-            let error: NSError = NSError(domain: "Edward pixelBufferPool is NULL", code: 00002, userInfo: nil)
-            setFinished(error)
-            return
+        return nil
+    }
+
+    
+    private func indexCallback(_ index: Int, time: CMTime) {
+        DispatchQueue.main.async {
+            self.delegate?.imageVideoMaker(self, index: index, currentTime: time)
         }
-        
-        CVPixelBufferPoolCreatePixelBuffer(nil, adaptor.pixelBufferPool!, &buffer)
-        
-        let defaultFPS: CMTimeScale = 24
-        var presentTime: CMTime = CMTime(value: -1, timescale: defaultFPS)
-        
-        var writeProgress: Double = 0
-        for i in 0..<images.count {
-            
-            autoreleasepool{
-                
-                while writerInput.isReadyForMoreMediaData == false {
-                    Thread.sleep(forTimeInterval: 0.1)
-                    debugPrint("writerInput isReadyForMoreMediaData == false, sleep for 0.1 second")
-                }
-                
-                let image: NBVideoImage = images[i]
-                
-                if let time = image.time {
-                    presentTime = time
-                } else {
-                    presentTime = CMTimeMake((presentTime.value + 1), presentTime.timescale)
-                }
-                
-                if i > images.count {
-                    buffer = nil
-                } else {
-                    
-                    buffer = images[i].cgImage.getPixelBuffer(size: videoSize)
-                    
-                    if buffer == nil {
-                        return
-                    }
-                    
-                    let appendSuccess: Bool = adaptor.append(buffer!, withPresentationTime: presentTime)
-                    assert(appendSuccess, "Failed to append")
-                }
-                
-            }
-            writeProgress = Double(i + 1) / Double(images.count) * 0.9 + fisrtProgress
-            setProgress(writeProgress)
+    }
+    
+    private func errorCallback(_ error: Error) {
+        DispatchQueue.main.async {
+            self.delegate?.imageVideoMakerError(self, error: error)
         }
-        
-        writerInput.markAsFinished()
-        
-        videoWriter.finishWriting {
-            setProgress(1)
-            setFinished(nil)
+    }
+    
+    private func finishedCallback() {
+        DispatchQueue.main.async {
+            self.delegate?.imageVideoMakerFinished(self)
         }
-        
     }
 
 }

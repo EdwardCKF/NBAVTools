@@ -34,12 +34,15 @@ extension CGImage {
         assert(context != nil, "context is nil")
         
         context?.concatenate(CGAffineTransform.identity)
-
+        
+//        let rect: CGRect = CGRect(x: 0 + (size.width - CGFloat(width)) * 0.5,
+//                                  y: (size.height - CGFloat(height)) * 0.5,
+//                                  width: CGFloat(width),
+//                                  height: CGFloat(height))
         let rect: CGRect = CGRect(x: 0,
                                   y: 0,
                                   width: CGFloat(width),
                                   height: CGFloat(height))
-        
         context?.scaleBy(x: (size.width / CGFloat(width)), y: (size.height / CGFloat(height)))
         
         context?.draw(self, in: rect)

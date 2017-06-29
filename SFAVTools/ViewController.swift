@@ -13,7 +13,11 @@ import AVFoundation
 class ViewController: UIViewController {
     
     var startButton: UIButton?
+    var endButton: UIButton?
+    var cancelButton: UIButton?
     var progressLabel: UILabel?
+    
+    var videoMaker: NBImageVideoMaker?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,14 +26,30 @@ class ViewController: UIViewController {
     }
 
     private func setupUI() {
+        let buttonHeight: CGFloat = 50
+        let buttonWidth: CGFloat = 100
+        let buttonX: CGFloat = (SCREEN_WIDTH - buttonWidth) * 0.5
         
         startButton = UIButton()
-        startButton?.frame = CGRect(x: 0, y: 0, width: 100, height: 50)
-        startButton?.center = view.center
+        startButton?.frame = CGRect(x: buttonX, y: 150, width: buttonWidth, height: buttonHeight)
         startButton?.setTitle("Start", for: .normal)
         startButton?.backgroundColor = UIColor.red
         startButton?.addTarget(self, action: #selector(ViewController.startButtonDidClick(_:)), for: .touchUpInside)
         view.addSubview(startButton!)
+        
+        endButton = UIButton()
+        endButton?.frame = CGRect(x: buttonX, y: 250, width: buttonWidth, height: buttonHeight)
+        endButton?.setTitle("End", for: .normal)
+        endButton?.backgroundColor = UIColor.yellow
+        endButton?.addTarget(self, action: #selector(ViewController.endButtonDidClick(_:)), for: .touchUpInside)
+        view.addSubview(endButton!)
+        
+        cancelButton = UIButton()
+        cancelButton?.frame = CGRect(x: buttonX, y: 350, width: buttonWidth, height: buttonHeight)
+        cancelButton?.setTitle("Cancel", for: .normal)
+        cancelButton?.backgroundColor = UIColor.blue
+        cancelButton?.addTarget(self, action: #selector(ViewController.cancelButtonDidClick(_:)), for: .touchUpInside)
+        view.addSubview(cancelButton!)
         
         progressLabel = UILabel()
         progressLabel?.frame = CGRect(x: 0, y: 64, width: SCREEN_WIDTH, height: 50)
@@ -43,6 +63,14 @@ class ViewController: UIViewController {
         
         //        demoForNB()
         demoForCreateVideoFromImages()
+    }
+    
+    func endButtonDidClick(_ sender: UIButton) {
+        videoMaker?.end()
+    }
+    
+    func cancelButtonDidClick(_ sender: UIButton) {
+        videoMaker?.cancel()
     }
 
 }
@@ -69,32 +97,33 @@ extension ViewController {
             return images
         }
         
-        let startDate: Date = Date()
+        let tempPath: String = Tools.getTempVideoPath()
+        let tempURL: URL = URL(fileURLWithPath: tempPath)
+        
+        let videoSize: CGSize = CGSize(width: 720, height: 1280)
+        
+        self.videoMaker = NBImageVideoMaker(outputURL: tempURL)
+        videoMaker?.size = videoSize
+        videoMaker?.delegate = self
+        videoMaker?.start()
         
         DispatchQueue.global().async {
             
-            let tempPath: String = Tools.getTempVideoPath()
-            
-            let nbImages: [NBVideoImage] = loadNBImages()
-            
-            let videoSize: CGSize = CGSize(width: 720, height: 1280)
-            
-            NBImageVideoMaker.createVideo(fromImages: nbImages, destination: tempPath, videoSize: videoSize, progressHandle: {[weak self] progress in
-                let progressStr: String = String(format: "%d%%", Int(progress * 100))
-                debugPrint(progressStr)
-                self?.progressLabel?.text = progressStr
+            for i in 1...110 {
                 
-            }) { [weak self] error in
-                
-                debugPrint("timeEnd----------:\(Date().timeIntervalSince(startDate))")
-                
-                if let err = error {
-                    debugPrint("demoForCreateVideoFromImages error: \(err)")
-                } else {
-                    self?.alertForSaveVideo(videoPath: tempPath)
+                let numStr: String = String(format: "%03d", i)
+                let imageName: String = "login_back_images.bundle/\(numStr).jpg"
+                if let image: CGImage = UIImage(named: imageName)?.cgImage {
+                    //time是每一帧的时间点,不填默认跟随24fps.
+                    let time: CMTime = CMTime(value: CMTimeValue((i-1) * 3), timescale: 30)
+                    let nbImage: NBVideoImage = NBVideoImage(cgImage: image, time: time)
+                    
+                    self.videoMaker?.append(image: nbImage)
                 }
             }
         }
+        
+        
     }
     
     func demoForNB() {
@@ -176,6 +205,22 @@ extension ViewController {
         let asset4 = AVAsset(url: url4)
         
         return [asset1,asset2,asset3,asset4]
+    }
+
+}
+
+extension ViewController: NBImageVideoMakerDelegate {
+    
+    func imageVideoMaker(_ sender: NBImageVideoMaker, index: Int, currentTime: CMTime) {
+        print("index:\(index)\ncurrentTime:\(currentTime)")
+    }
+    
+    func imageVideoMakerFinished(_ sender: NBImageVideoMaker) {
+        print("imageVideoMakerFinished")
+    }
+    
+    func imageVideoMakerError(_ sender: NBImageVideoMaker, error: Error) {
+        print("imageVideoMakerError:\(error)")
     }
 
 }
