@@ -87,6 +87,7 @@ extension ViewController {
         
         self.videoMaker = NBImageVideoMaker(outputURL: tempURL)
         videoMaker?.size = videoSize
+        videoMaker?.fps = 120
         videoMaker?.delegate = self
         videoMaker?.start()
         
@@ -98,15 +99,13 @@ extension ViewController {
                 let imageName: String = "login_back_images.bundle/\(numStr).jpg"
                 if let image: CGImage = UIImage(named: imageName)?.cgImage {
                     //time是每一帧的时间点,不填默认跟随24fps.
-                    let time: CMTime = CMTime(value: CMTimeValue((i-1) * 3), timescale: 30)
-                    let nbImage: NBVideoImage = NBVideoImage(cgImage: image, time: time)
+//                    let time: CMTime = CMTime(value: CMTimeValue((i-1) * 3), timescale: 30)
+                    let nbImage: NBVideoImage = NBVideoImage(cgImage: image, time: nil)
                     
                     self.videoMaker?.append(image: nbImage)
                 }
             }
-        }
-        
-        
+        }  
     }
     
     func demoForNB() {
@@ -202,7 +201,7 @@ extension ViewController: NBImageVideoMakerDelegate {
         print("imageVideoMakerFinished")
     }
     
-    func imageVideoMakerError(_ sender: NBImageVideoMaker, error: Error) {
+    func imageVideoMaker(_ sender: NBImageVideoMaker, error: Error) {
         print("imageVideoMakerError:\(error)")
     }
 

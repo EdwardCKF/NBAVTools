@@ -12,7 +12,7 @@ import UIKit
 protocol NBImageVideoMakerDelegate: class {
     func imageVideoMaker(_ sender: NBImageVideoMaker, index: Int, currentTime: CMTime)
     func imageVideoMakerFinished(_ sender: NBImageVideoMaker)
-    func imageVideoMakerError(_ sender: NBImageVideoMaker, error: Error)
+    func imageVideoMaker(_ sender: NBImageVideoMaker, error: Error)
 }
 
 class NBImageVideoMaker {
@@ -22,6 +22,7 @@ class NBImageVideoMaker {
     var size: CGSize = CGSize(width: 720, height: 1280)
     var bitRate: Int = 1000000
     var output: URL
+    var fps: Int = 24
     var index: Int = 0
     
     private var videoWriter: AVAssetWriter?
@@ -155,7 +156,7 @@ class NBImageVideoMaker {
         
         videoWriter?.add(writerInput!)
         
-        presentTime = CMTime(value: -1, timescale: 24)
+        presentTime = CMTime(value: -1, timescale: CMTimeScale(fps))
         
         index = 0
         
@@ -171,7 +172,7 @@ class NBImageVideoMaker {
     
     private func errorCallback(_ error: Error) {
         DispatchQueue.main.async {
-            self.delegate?.imageVideoMakerError(self, error: error)
+            self.delegate?.imageVideoMaker(self, error: error)
         }
     }
     
