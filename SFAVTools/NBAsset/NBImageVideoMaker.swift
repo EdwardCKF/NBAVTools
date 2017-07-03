@@ -35,6 +35,8 @@ class NBImageVideoMaker {
     //audio
     private var audioAsset: AVAsset?
     private var audioWriterInput: AVAssetWriterInput?
+    private var audioDuration: Double = 0
+    private var isAudioStart: Bool = false
     
     init(outputURL: URL, audioAsset asset: AVAsset) {
         output = outputURL
@@ -73,10 +75,6 @@ class NBImageVideoMaker {
     
     func end() {
         isStart = false
-        
-        if audioAsset != nil {
-            processAudio()
-        }
     
         writerInput?.markAsFinished()
         audioWriterInput?.markAsFinished()
@@ -113,49 +111,6 @@ class NBImageVideoMaker {
         
     }
     
-    private func processAudio() {
-        
-        guard let asset = audioAsset else {
-            return
-        }
-        do {
-
-            let buffers = try? NBAssetCMBufferReader.read(asset: asset, mediaType: AVMediaTypeAudio)
-            
-            for buffer in buffers! {
-                
-                while true {
-                    if audioWriterInput!.isReadyForMoreMediaData {
-                        audioWriterInput?.append(buffer)
-                        debugPrint("11111111111111111111")
-                        break
-                    } else {
-                        debugPrint("audioWriterInput isReadyForMoreMediaData == false, sleep for 0.1 second")
-                    }
-                }
-            }
-        
-        } catch {
-            debugPrint(error.localizedDescription)
-        }
-    }
-    
-    private func append(audioBuffer: CMSampleBuffer) {
-        if audioWriterInput == nil {
-            return
-        }
-        
-        while audioWriterInput!.isReadyForMoreMediaData == false {
-            if isStart == false {
-                break
-            }
-            Thread.sleep(forTimeInterval: 0.1)
-            debugPrint("audioWriterInput isReadyForMoreMediaData == false, sleep for 0.1 second")
-        }
-        
-        audioWriterInput?.append(audioBuffer)
-    }
-    
     private func append(pixelBuffer: CVPixelBuffer, inTime: CMTime) {
         
         if writerInput == nil {
@@ -180,7 +135,63 @@ class NBImageVideoMaker {
         self.indexCallback(self.index, time: inTime)
         self.index += 1
         
+        let time: TimeInterval = CMTimeGetSeconds(inTime)
+        if canStartProcessAudio(videoProcessTime: time) {
+            startProcessAudio()
+        }
+        
     }
+    
+    private func canStartProcessAudio(videoProcessTime time: TimeInterval) -> Bool {
+        
+        if isAudioStart {
+            return false
+        }
+        
+        if audioAsset == nil || audioDuration == 0 {
+            return false
+        }
+        //Audio can not set into video while video duration smaller than audio duration * 0.5.
+        if time < audioDuration * 0.6 {
+            return false
+        }
+        return true
+    }
+    
+    private func startProcessAudio() {
+        
+        isAudioStart = true
+        
+        guard let asset = audioAsset else {
+            return
+        }
+        
+        do {
+            _ = try NBAssetCMBufferReader.read(asset: asset, mediaType: AVMediaTypeAudio, bufferHandle: { (buffer, index, time) in
+                append(audioBuffer: buffer)
+            })
+            
+        } catch {
+            debugPrint(error.localizedDescription)
+        }
+    }
+    
+    private func append(audioBuffer: CMSampleBuffer) {
+        if audioWriterInput == nil {
+            return
+        }
+        
+        while audioWriterInput!.isReadyForMoreMediaData == false {
+            if isStart == false {
+                break
+            }
+            Thread.sleep(forTimeInterval: 0.1)
+            debugPrint("audioWriterInput isReadyForMoreMediaData == false, sleep for 0.1 second")
+        }
+        
+        audioWriterInput?.append(audioBuffer)
+    }
+
     
     private func configerProperties() -> Error? {
         
@@ -211,6 +222,7 @@ class NBImageVideoMaker {
         
         //audio
         if audioAsset != nil {
+            audioDuration = CMTimeGetSeconds(audioAsset!.duration)
             audioWriterInput = AVAssetWriterInput(mediaType: AVMediaTypeAudio, outputSettings: nil)
             audioWriterInput?.expectsMediaDataInRealTime = true
             videoWriter?.add(audioWriterInput!)

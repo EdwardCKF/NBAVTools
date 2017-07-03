@@ -109,7 +109,7 @@ extension ViewController {
         
         self.videoMaker = NBImageVideoMaker(outputURL: tempURL, audioAsset: audioAsset)
         videoMaker?.size = videoSize
-        videoMaker?.fps = 24
+        videoMaker?.fps = 10
         videoMaker?.delegate = self
         videoMaker?.start()
         
