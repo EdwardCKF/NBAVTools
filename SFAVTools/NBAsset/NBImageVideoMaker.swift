@@ -30,8 +30,16 @@ class NBImageVideoMaker {
     private var adaptor: AVAssetWriterInputPixelBufferAdaptor?
     private var buffer: CVPixelBuffer?
     private var presentTime: CMTime = CMTime()
-    private let appendQueue: DispatchQueue = DispatchQueue(label: "append queue")
     private var isStart: Bool = false
+    
+    //audio
+    private var audioAsset: AVAsset?
+    private var audioWriterInput: AVAssetWriterInput?
+    
+    init(outputURL: URL, audioAsset asset: AVAsset) {
+        output = outputURL
+        audioAsset = asset
+    }
     
     init(outputURL: URL) {
         output = outputURL
@@ -60,13 +68,18 @@ class NBImageVideoMaker {
         }
         
         CVPixelBufferPoolCreatePixelBuffer(nil, adaptor!.pixelBufferPool!, &buffer)
+        
     }
     
     func end() {
         isStart = false
+        
+        if audioAsset != nil {
+            processAudio()
+        }
     
         writerInput?.markAsFinished()
-        
+        audioWriterInput?.markAsFinished()
         videoWriter?.finishWriting { [weak self] in
             self?.finishedCallback()
         }
@@ -100,39 +113,79 @@ class NBImageVideoMaker {
         
     }
     
+    private func processAudio() {
+        
+        guard let asset = audioAsset else {
+            return
+        }
+        do {
+
+            let buffers = try? NBAssetCMBufferReader.read(asset: asset, mediaType: AVMediaTypeAudio)
+            
+            for buffer in buffers! {
+                
+                while true {
+                    if audioWriterInput!.isReadyForMoreMediaData {
+                        audioWriterInput?.append(buffer)
+                        debugPrint("11111111111111111111")
+                        break
+                    } else {
+                        debugPrint("audioWriterInput isReadyForMoreMediaData == false, sleep for 0.1 second")
+                    }
+                }
+            }
+        
+        } catch {
+            debugPrint(error.localizedDescription)
+        }
+    }
+    
+    private func append(audioBuffer: CMSampleBuffer) {
+        if audioWriterInput == nil {
+            return
+        }
+        
+        while audioWriterInput!.isReadyForMoreMediaData == false {
+            if isStart == false {
+                break
+            }
+            Thread.sleep(forTimeInterval: 0.1)
+            debugPrint("audioWriterInput isReadyForMoreMediaData == false, sleep for 0.1 second")
+        }
+        
+        audioWriterInput?.append(audioBuffer)
+    }
+    
     private func append(pixelBuffer: CVPixelBuffer, inTime: CMTime) {
         
         if writerInput == nil {
             return
         }
         
-        appendQueue.sync {
-            while writerInput!.isReadyForMoreMediaData == false {
-                if isStart == false {
-                    break
-                }
-                Thread.sleep(forTimeInterval: 0.1)
-                debugPrint("writerInput isReadyForMoreMediaData == false, sleep for 0.1 second")
+        while writerInput!.isReadyForMoreMediaData == false {
+            if isStart == false {
+                break
             }
-            
-            if let appendSuccess: Bool = self.adaptor?.append(pixelBuffer, withPresentationTime: inTime) {
-                
-                if appendSuccess == false {
-                    return
-                }
-            }
-            
-            self.indexCallback(self.index, time: inTime)
-            self.index += 1
-            
+            Thread.sleep(forTimeInterval: 0.1)
+            debugPrint("writerInput isReadyForMoreMediaData == false, sleep for 0.1 second")
         }
+        
+        if let appendSuccess: Bool = self.adaptor?.append(pixelBuffer, withPresentationTime: inTime) {
+            
+            if appendSuccess == false {
+                return
+            }
+        }
+        
+        self.indexCallback(self.index, time: inTime)
+        self.index += 1
         
     }
     
     private func configerProperties() -> Error? {
         
         do {
-            videoWriter = try AVAssetWriter(url: output, fileType: AVFileTypeMPEG4)
+            videoWriter = try AVAssetWriter(url: output, fileType: AVFileTypeQuickTimeMovie)
         } catch {
             return error
         }
@@ -155,6 +208,13 @@ class NBImageVideoMaker {
         adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writerInput!, sourcePixelBufferAttributes: nil)
         
         videoWriter?.add(writerInput!)
+        
+        //audio
+        if audioAsset != nil {
+            audioWriterInput = AVAssetWriterInput(mediaType: AVMediaTypeAudio, outputSettings: nil)
+            audioWriterInput?.expectsMediaDataInRealTime = true
+            videoWriter?.add(audioWriterInput!)
+        }
         
         presentTime = CMTime(value: -1, timescale: CMTimeScale(fps))
         

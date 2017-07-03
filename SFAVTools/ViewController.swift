@@ -61,8 +61,10 @@ class ViewController: UIViewController {
     
     func startButtonDidClick(_ sender: UIButton) {
         
-        //        demoForNB()
+//        demoForNB()
         demoForCreateVideoFromImages()
+//        demoForAVAddAudioTest()
+
     }
     
     func endButtonDidClick(_ sender: UIButton) {
@@ -78,16 +80,36 @@ class ViewController: UIViewController {
 //MARK: Demo
 extension ViewController {
     
+    func demoForAVAddAudioTest() {
+        guard let video1URL: URL = Bundle.main.url(forResource: "nongyao", withExtension: "mp4") else {
+            return
+        }
+        
+        let output: URL = Tools.getTempVideoURL()
+        
+        let input: AVAsset = AVAsset(url: video1URL)
+        
+        try? AVAddAudioTest.videoReverse(videoAsset: input, outputURL: output, fileType: nil) {
+            self.alertForSaveVideo(videoPath: output.path)
+        }
+        
+        
+        
+    }
+    
     func demoForCreateVideoFromImages() {
+        
+        let audioURL: URL = Bundle.main.url(forResource: "login_back_music", withExtension: "mp3")!
+        let audioAsset: AVAsset = AVAsset(url: audioURL)
         
         let tempPath: String = Tools.getTempVideoPath()
         let tempURL: URL = URL(fileURLWithPath: tempPath)
         
         let videoSize: CGSize = CGSize(width: 720, height: 1280)
         
-        self.videoMaker = NBImageVideoMaker(outputURL: tempURL)
+        self.videoMaker = NBImageVideoMaker(outputURL: tempURL, audioAsset: audioAsset)
         videoMaker?.size = videoSize
-        videoMaker?.fps = 120
+        videoMaker?.fps = 24
         videoMaker?.delegate = self
         videoMaker?.start()
         
@@ -199,6 +221,7 @@ extension ViewController: NBImageVideoMakerDelegate {
     
     func imageVideoMakerFinished(_ sender: NBImageVideoMaker) {
         print("imageVideoMakerFinished")
+        alertForSaveVideo(videoPath: sender.output.path)
     }
     
     func imageVideoMaker(_ sender: NBImageVideoMaker, error: Error) {

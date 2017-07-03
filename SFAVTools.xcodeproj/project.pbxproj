@@ -22,6 +22,10 @@
 		3CAF98281EBC1BCF00D8DA5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3CAF98271EBC1BCF00D8DA5E /* Assets.xcassets */; };
 		3CAF982B1EBC1BCF00D8DA5E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CAF98291EBC1BCF00D8DA5E /* LaunchScreen.storyboard */; };
 		3CB248451ED52042005BD47C /* 121.MP4 in Resources */ = {isa = PBXBuildFile; fileRef = 3CB248441ED52042005BD47C /* 121.MP4 */; };
+		3CC2B2E91F09DCB500F31667 /* NBTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC2B2E81F09DCB500F31667 /* NBTools.swift */; };
+		3CC2B2ED1F09ECC400F31667 /* AVAddAudioTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC2B2EC1F09ECC400F31667 /* AVAddAudioTest.swift */; };
+		3CC2B2EF1F09F0DC00F31667 /* nongyao.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3CC2B2EE1F09F0DC00F31667 /* nongyao.mp4 */; };
+		3CC2B2F31F0A3CA300F31667 /* NBAssetCMBufferReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC2B2F21F0A3CA300F31667 /* NBAssetCMBufferReader.swift */; };
 		3CCED7F61F035DDF00544F45 /* NBAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCED7F41F035DDF00544F45 /* NBAsset.swift */; };
 		3CCED8011F035E2B00544F45 /* AVExportCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCED7F81F035E2B00544F45 /* AVExportCommand.swift */; };
 		3CCED8021F035E2B00544F45 /* AVUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CCED7FA1F035E2B00544F45 /* AVUtilities.m */; };
@@ -62,6 +66,10 @@
 		3CAF982A1EBC1BCF00D8DA5E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3CAF982C1EBC1BCF00D8DA5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CB248441ED52042005BD47C /* 121.MP4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 121.MP4; sourceTree = "<group>"; };
+		3CC2B2E81F09DCB500F31667 /* NBTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBTools.swift; sourceTree = "<group>"; };
+		3CC2B2EC1F09ECC400F31667 /* AVAddAudioTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVAddAudioTest.swift; sourceTree = "<group>"; };
+		3CC2B2EE1F09F0DC00F31667 /* nongyao.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = nongyao.mp4; sourceTree = "<group>"; };
+		3CC2B2F21F0A3CA300F31667 /* NBAssetCMBufferReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBAssetCMBufferReader.swift; sourceTree = "<group>"; };
 		3CCED7F41F035DDF00544F45 /* NBAsset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBAsset.swift; sourceTree = "<group>"; };
 		3CCED7F81F035E2B00544F45 /* AVExportCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVExportCommand.swift; sourceTree = "<group>"; };
 		3CCED7F91F035E2B00544F45 /* AVUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVUtilities.h; sourceTree = "<group>"; };
@@ -101,6 +109,7 @@
 			children = (
 				3CCED8141F0386B600544F45 /* login_back_images.bundle */,
 				3C93FD2E1EE506F800DFC2AF /* login_back_music.mp3 */,
+				3CC2B2EE1F09F0DC00F31667 /* nongyao.mp4 */,
 				3C6714EC1EDFFBB500290FB0 /* 5_1.mp4 */,
 				3C6714ED1EDFFBB500290FB0 /* 5_2.mp4 */,
 				3C6714EE1EDFFBB500290FB0 /* 5_3.mp4 */,
@@ -137,6 +146,8 @@
 				3CCED7F71F035E2B00544F45 /* SingleAVTools */,
 				3CAF98201EBC1BCE00D8DA5E /* AppDelegate.swift */,
 				3CAF98221EBC1BCE00D8DA5E /* ViewController.swift */,
+				3CC2B2EC1F09ECC400F31667 /* AVAddAudioTest.swift */,
+				3CC2B2F21F0A3CA300F31667 /* NBAssetCMBufferReader.swift */,
 				3CD5106A1ECDACB400B40746 /* Tools */,
 				3C52B3661ECE927A00B9687D /* Resources */,
 				3CAF98241EBC1BCE00D8DA5E /* Main.storyboard */,
@@ -155,6 +166,7 @@
 				3CD7D58A1F08228100073857 /* NBChanger.swift */,
 				3CCED8091F035F1600544F45 /* NBImageVideoMaker.swift */,
 				3CCED80A1F035F1600544F45 /* NBVideoImage.swift */,
+				3CC2B2E81F09DCB500F31667 /* NBTools.swift */,
 				3CCED80D1F035F1F00544F45 /* extensions */,
 			);
 			path = NBAsset;
@@ -294,6 +306,7 @@
 				3CAF982B1EBC1BCF00D8DA5E /* LaunchScreen.storyboard in Resources */,
 				3C6714EF1EDFFBB500290FB0 /* 5_1.mp4 in Resources */,
 				3CAF98281EBC1BCF00D8DA5E /* Assets.xcassets in Resources */,
+				3CC2B2EF1F09F0DC00F31667 /* nongyao.mp4 in Resources */,
 				3CCED8151F0386B600544F45 /* login_back_images.bundle in Resources */,
 				3CAF98261EBC1BCE00D8DA5E /* Main.storyboard in Resources */,
 			);
@@ -313,10 +326,13 @@
 				3CCED8061F035E2B00544F45 /* AVVideoRotate.swift in Sources */,
 				3CCED8041F035E2B00544F45 /* AVVideoMerge.swift in Sources */,
 				3CCED7F61F035DDF00544F45 /* NBAsset.swift in Sources */,
+				3CC2B2F31F0A3CA300F31667 /* NBAssetCMBufferReader.swift in Sources */,
 				3CCED8081F035E2B00544F45 /* AVVideoTrim.swift in Sources */,
 				3CAF98231EBC1BCE00D8DA5E /* ViewController.swift in Sources */,
 				3C52B3651ECE8C8900B9687D /* Constants.swift in Sources */,
 				3CCED8071F035E2B00544F45 /* AVVideoSpeed.swift in Sources */,
+				3CC2B2ED1F09ECC400F31667 /* AVAddAudioTest.swift in Sources */,
+				3CC2B2E91F09DCB500F31667 /* NBTools.swift in Sources */,
 				3CAF98211EBC1BCE00D8DA5E /* AppDelegate.swift in Sources */,
 				3CCED8101F035F1F00544F45 /* AVAsset+NB+Extension.swift in Sources */,
 				3CCED8031F035E2B00544F45 /* AVVideoBackgroundFilter.swift in Sources */,

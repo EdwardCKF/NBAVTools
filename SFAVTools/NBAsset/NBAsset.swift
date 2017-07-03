@@ -42,7 +42,7 @@ public class NBAsset {
     }
     
     func startProcessVideo(_ closure: ((_ make: NBAsset)->())) -> NBAsset {
-    
+        
         closure(self)
         
         processMutableVideoComposition()
@@ -86,7 +86,7 @@ public class NBAsset {
     }
     
     @discardableResult func trim(progressRange range: Range<Double>) -> NBAsset {
-    
+        
         _trim(progressRange: range)
         
         return self
@@ -95,7 +95,7 @@ public class NBAsset {
     @discardableResult func stretchRender(_ size: CGSize) -> NBAsset {
         
         _stretch(renderSize: videoRenderSize, toSize: size)
-    
+        
         return self
     }
     
@@ -109,7 +109,7 @@ public class NBAsset {
     @discardableResult func add(_ assets: [AVAsset]) -> NBAsset {
         
         _add(assets)
-    
+        
         return self
     }
     
@@ -121,9 +121,9 @@ public class NBAsset {
     }
     
     @discardableResult func watermarks(_ watermarks: [CALayer]) -> NBAsset {
-    
+        
         _watermark(watermarks)
-    
+        
         return self
     }
     
@@ -171,7 +171,7 @@ public class NBAsset {
         var audioTrack: AVMutableCompositionTrack?
         
         let mixComposition = AVMutableComposition()
-
+        
         let _timeRange = timeRange ?? CMTimeRangeMake(kCMTimeZero, asset.duration)
         
         for assetVideoTrack in asset.tracks(withMediaType: AVMediaTypeVideo) {
@@ -199,10 +199,10 @@ public class NBAsset {
                 
             }
         }
-
+        
         return mixComposition
     }
-
+    
     private func getDefultRenderSize() -> CGSize {
         guard let videoTrack = asset.tracks(withMediaType: AVMediaTypeVideo).first else {
             return CGSize.zero
@@ -313,10 +313,12 @@ extension NBAsset {
     }
     
     fileprivate func _stretch(renderSize fromSize : CGSize, toSize: CGSize) {
-
+        
         let renderW: CGFloat
         let renderH: CGFloat
-        if (fromSize.width/fromSize.height) >= (SCREEN_WIDTH/SCREEN_HEIGHT) {
+        let screenWidth: CGFloat = UIScreen.main.bounds.size.width
+        let screenHeight: CGFloat = UIScreen.main.bounds.size.height
+        if (fromSize.width/fromSize.height) >= (screenWidth/screenHeight) {
             renderW = fromSize.width
             renderH = fromSize.width / toSize.width * toSize.height
         } else {
@@ -327,7 +329,7 @@ extension NBAsset {
         
         let tx = (renderW - fromSize.width) * 0.5
         let ty = (renderH - fromSize.height) * 0.5
-
+        
         videoTransform.tx = tx + videoTransform.tx
         videoTransform.ty = ty + videoTransform.ty
         
@@ -351,7 +353,7 @@ extension NBAsset {
         let maskX: CGFloat = (renderSize.width - absWidth) * 0.5
         let maskY: CGFloat = (renderSize.height - absHeight) * 0.5
         let maskPoint = CGPoint(x: maskX, y: maskY)
-    
+        
         //Set layers
         let parentLayer = CALayer()
         parentLayer.frame = CGRect(x: 0, y: 0, width: renderSize.width, height: renderSize.height)

@@ -7,6 +7,7 @@
 //
 
 import AVFoundation
+import UIKit
 
 public class NBChanger {
     
@@ -20,7 +21,7 @@ public class NBChanger {
     fileprivate var videoAudioMix: AVMutableAudioMix?
     fileprivate var videoMode: String = AVFileTypeQuickTimeMovie
     fileprivate var videoFPS: Float = 30
-
+    
     init(_ avAsset: AVAsset) {
         asset = avAsset
         mutableComposition = AVMutableComposition()
@@ -268,7 +269,9 @@ extension NBChanger {
         
         let renderW: CGFloat
         let renderH: CGFloat
-        if (fromSize.width/fromSize.height) >= (SCREEN_WIDTH/SCREEN_HEIGHT) {
+        let screenWidth: CGFloat = UIScreen.main.bounds.size.width
+        let screenHeight: CGFloat = UIScreen.main.bounds.size.height
+        if (fromSize.width/fromSize.height) >= (screenWidth/screenHeight) {
             renderW = fromSize.width
             renderH = fromSize.width / toSize.width * toSize.height
         } else {
