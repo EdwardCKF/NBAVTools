@@ -17,6 +17,15 @@ protocol NBImageVideoMakerDelegate: class {
 
 class NBImageVideoMaker {
     
+    enum ProcessState {
+        case normal
+        case start
+        case process
+        case end
+        case cancel
+        case faild
+    }
+    
     weak var delegate: NBImageVideoMakerDelegate?
     
     var size: CGSize = CGSize(width: 720, height: 1280)
@@ -36,7 +45,7 @@ class NBImageVideoMaker {
     private var audioAsset: AVAsset?
     private var audioWriterInput: AVAssetWriterInput?
     private var audioDuration: Double = 0
-    private var isAudioStart: Bool = false
+    private var audioState: ProcessState = .normal
     
     init(outputURL: URL, audioAsset asset: AVAsset) {
         output = outputURL
@@ -59,9 +68,20 @@ class NBImageVideoMaker {
             errorCallback(error!)
             return
         }
-        isStart = true
-        videoWriter?.startWriting()
+        
+        if let isSuccess = videoWriter?.startWriting() {
+            
+            if isSuccess == false {
+                let error = NSError(domain: "start videoWriter failed", code: 0, userInfo: nil)
+                errorCallback(error)
+                return
+            }
+        
+        }
+        
         videoWriter?.startSession(atSourceTime: kCMTimeZero)
+        
+        isStart = true
         
         if adaptor?.pixelBufferPool == nil {
             let error: NSError = NSError(domain: "Edward pixelBufferPool is NULL", code: 00002, userInfo: nil)
@@ -71,13 +91,19 @@ class NBImageVideoMaker {
         
         CVPixelBufferPoolCreatePixelBuffer(nil, adaptor!.pixelBufferPool!, &buffer)
         
+        startProcessAudio()
     }
     
     func end() {
         isStart = false
-    
+        
+        while audioState == .process {
+            Thread.sleep(forTimeInterval: 0.1)
+            debugPrint("Edward wait for audio process for 0.1 second")
+        }
+        
         writerInput?.markAsFinished()
-        audioWriterInput?.markAsFinished()
+        
         videoWriter?.finishWriting { [weak self] in
             self?.finishedCallback()
         }
@@ -135,63 +161,48 @@ class NBImageVideoMaker {
         self.indexCallback(self.index, time: inTime)
         self.index += 1
         
-        let time: TimeInterval = CMTimeGetSeconds(inTime)
-        if canStartProcessAudio(videoProcessTime: time) {
-            startProcessAudio()
-        }
-        
     }
     
-    private func canStartProcessAudio(videoProcessTime time: TimeInterval) -> Bool {
-        
-        if isAudioStart {
-            return false
-        }
-        
-        if audioAsset == nil || audioDuration == 0 {
-            return false
-        }
-        //Audio can not set into video while video duration smaller than audio duration * 0.5.
-        if time < audioDuration * 0.6 {
-            return false
-        }
-        return true
-    }
     
     private func startProcessAudio() {
         
-        isAudioStart = true
+        audioState = .start
         
         guard let asset = audioAsset else {
             return
         }
+        let queue = DispatchQueue(label: "audioInputQueue")
         
-        do {
-            _ = try NBAssetCMBufferReader.read(asset: asset, mediaType: AVMediaTypeAudio, bufferHandle: { (buffer, index, time) in
-                append(audioBuffer: buffer)
-            })
+        audioWriterInput?.requestMediaDataWhenReady(on: queue, using: {
             
-        } catch {
-            debugPrint(error.localizedDescription)
-        }
-    }
-    
-    private func append(audioBuffer: CMSampleBuffer) {
-        if audioWriterInput == nil {
-            return
-        }
-        
-        while audioWriterInput!.isReadyForMoreMediaData == false {
-            if isStart == false {
-                break
+            if self.audioState == .process {
+                return
             }
-            Thread.sleep(forTimeInterval: 0.1)
-            debugPrint("audioWriterInput isReadyForMoreMediaData == false, sleep for 0.1 second")
-        }
+            
+            if self.audioWriterInput == nil {
+                return
+            }
+            
+            guard let buffers = try? NBAssetCMBufferReader.read(asset: asset, mediaType: AVMediaTypeAudio) else {
+                return
+            }
+            
+            self.audioState = .process
+            
+            for buffer in buffers {
+                
+                while !self.audioWriterInput!.isReadyForMoreMediaData {
+                    Thread.sleep(forTimeInterval: 0.5)
+                    debugPrint("sleep 0.5 audio")
+                }
+                self.audioWriterInput?.append(buffer)
+            }
+            
+            self.audioWriterInput?.markAsFinished()
+            self.audioState = .end
+        })
         
-        audioWriterInput?.append(audioBuffer)
     }
-
     
     private func configerProperties() -> Error? {
         
@@ -216,6 +227,8 @@ class NBImageVideoMaker {
         
         writerInput = AVAssetWriterInput(mediaType: AVMediaTypeVideo, outputSettings: videoSetting)
         
+        writerInput?.expectsMediaDataInRealTime = true
+        
         adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writerInput!, sourcePixelBufferAttributes: nil)
         
         videoWriter?.add(writerInput!)
@@ -224,7 +237,7 @@ class NBImageVideoMaker {
         if audioAsset != nil {
             audioDuration = CMTimeGetSeconds(audioAsset!.duration)
             audioWriterInput = AVAssetWriterInput(mediaType: AVMediaTypeAudio, outputSettings: nil)
-            audioWriterInput?.expectsMediaDataInRealTime = true
+            audioWriterInput?.expectsMediaDataInRealTime = false
             videoWriter?.add(audioWriterInput!)
         }
         
@@ -234,7 +247,7 @@ class NBImageVideoMaker {
         
         return nil
     }
-
+    
     
     private func indexCallback(_ index: Int, time: CMTime) {
         DispatchQueue.main.async {
@@ -253,5 +266,5 @@ class NBImageVideoMaker {
             self.delegate?.imageVideoMakerFinished(self)
         }
     }
-
+    
 }

@@ -6,7 +6,7 @@
 //  Copyright © 2017年 Edward. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 func Degree(_ degree: Double) -> CGFloat {
     return CGFloat(degree / 180 * Double.pi)

@@ -80,22 +80,6 @@ class ViewController: UIViewController {
 //MARK: Demo
 extension ViewController {
     
-    func demoForAVAddAudioTest() {
-        guard let video1URL: URL = Bundle.main.url(forResource: "nongyao", withExtension: "mp4") else {
-            return
-        }
-        
-        let output: URL = Tools.getTempVideoURL()
-        
-        let input: AVAsset = AVAsset(url: video1URL)
-        
-        try? AVAddAudioTest.videoReverse(videoAsset: input, outputURL: output, fileType: nil) {
-            self.alertForSaveVideo(videoPath: output.path)
-        }
-        
-        
-        
-    }
     
     func demoForCreateVideoFromImages() {
         
