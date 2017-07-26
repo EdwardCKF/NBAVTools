@@ -18,6 +18,7 @@ class ViewController: UIViewController {
     var progressLabel: UILabel?
     
     var videoMaker: NBImageVideoMaker?
+    var videoCompression: VideoCompression?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,8 +63,9 @@ class ViewController: UIViewController {
     func startButtonDidClick(_ sender: UIButton) {
         
 //        demoForNB()
-        demoForCreateVideoFromImages()
+//        demoForCreateVideoFromImages()
 //        demoForAVAddAudioTest()
+        demoForVideoCompression()
 
     }
     
@@ -79,6 +81,18 @@ class ViewController: UIViewController {
 
 //MARK: Demo
 extension ViewController {
+    
+    func demoForVideoCompression() {
+        
+        //没有声音的视频
+        let noVoiceURL: URL = Bundle.main.url(forResource: "5_2", withExtension: "mp4")!
+        let noVoiceAsset: AVAsset = AVAsset(url: noVoiceURL)
+        let output: URL = Tools.getTempVideoURL()
+        
+        videoCompression = VideoCompression(inputAsset: noVoiceAsset, outputURL: output)
+        videoCompression?.bitRate = 500000
+        videoCompression?.start()
+    }
     
     
     func demoForCreateVideoFromImages() {

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C1274031F27185B0024BD45 /* VideoCompression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C1274021F27185B0024BD45 /* VideoCompression.swift */; };
 		3C52B3651ECE8C8900B9687D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C52B3641ECE8C8900B9687D /* Constants.swift */; };
 		3C52B37C1ECE927A00B9687D /* 5.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C52B36F1ECE927A00B9687D /* 5.m4v */; };
 		3C52B37D1ECE927A00B9687D /* heng.MOV in Resources */ = {isa = PBXBuildFile; fileRef = 3C52B3701ECE927A00B9687D /* heng.MOV */; };
@@ -47,6 +48,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3C1274021F27185B0024BD45 /* VideoCompression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoCompression.swift; sourceTree = "<group>"; };
 		3C52B3641ECE8C8900B9687D /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		3C52B36F1ECE927A00B9687D /* 5.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = 5.m4v; sourceTree = "<group>"; };
 		3C52B3701ECE927A00B9687D /* heng.MOV */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = heng.MOV; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 			isa = PBXGroup;
 			children = (
 				3CCED7F81F035E2B00544F45 /* AVExportCommand.swift */,
+				3C1274021F27185B0024BD45 /* VideoCompression.swift */,
 				3CCED7F91F035E2B00544F45 /* AVUtilities.h */,
 				3CCED7FA1F035E2B00544F45 /* AVUtilities.m */,
 				3CCED7FB1F035E2B00544F45 /* AVVideoBackgroundFilter.swift */,
@@ -327,6 +330,7 @@
 				3CCED8081F035E2B00544F45 /* AVVideoTrim.swift in Sources */,
 				3CAF98231EBC1BCE00D8DA5E /* ViewController.swift in Sources */,
 				3C52B3651ECE8C8900B9687D /* Constants.swift in Sources */,
+				3C1274031F27185B0024BD45 /* VideoCompression.swift in Sources */,
 				3CCED8071F035E2B00544F45 /* AVVideoSpeed.swift in Sources */,
 				3CC2B2E91F09DCB500F31667 /* NBTools.swift in Sources */,
 				3CAF98211EBC1BCE00D8DA5E /* AppDelegate.swift in Sources */,
