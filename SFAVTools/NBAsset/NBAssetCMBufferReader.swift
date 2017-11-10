@@ -11,7 +11,7 @@ import AVFoundation
 
 class NBAssetCMBufferReader {
     
-    class func read(asset: AVAsset, mediaType: String) throws -> [CMSampleBuffer] {
+    class func read(asset: AVAsset, mediaType: AVMediaType) throws -> [CMSampleBuffer] {
         
         let reader: AVAssetReader
         var index: Int = 0
@@ -51,7 +51,7 @@ class NBAssetCMBufferReader {
         return buffers
     }
     
-    class func read(asset: AVAsset, mediaType: String, bufferHandle: ((_ buffer: CMSampleBuffer, _ index: Int, _ time: CMTime)->())) throws -> AVAssetReader {
+    class func read(asset: AVAsset, mediaType: AVMediaType, bufferHandle: ((_ buffer: CMSampleBuffer, _ index: Int, _ time: CMTime)->())) throws -> AVAssetReader {
     
         let reader: AVAssetReader
         var index: Int = 0

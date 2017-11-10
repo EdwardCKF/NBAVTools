@@ -15,29 +15,29 @@ class AVVideoSpeed {
         
         let mixComposition = AVMutableComposition()
         
-        let videoTrack = mixComposition.addMutableTrack(withMediaType: AVMediaTypeVideo, preferredTrackID: kCMPersistentTrackID_Invalid)
-        let audioTrack = mixComposition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid)
+        let videoTrack = mixComposition.addMutableTrack(withMediaType: AVMediaType.video, preferredTrackID: kCMPersistentTrackID_Invalid)
+        let audioTrack = mixComposition.addMutableTrack(withMediaType: AVMediaType.audio, preferredTrackID: kCMPersistentTrackID_Invalid)
         
         
         let timeRange = CMTimeRangeMake(kCMTimeZero, asset.duration)
         let scaleTimeValue = Double(asset.duration.value)/speedMultiple
         let scaleTime = CMTime(value: CMTimeValue(scaleTimeValue), timescale: asset.duration.timescale)
         
-        for assetVideoTrack in asset.tracks(withMediaType: AVMediaTypeVideo) {
+        for assetVideoTrack in asset.tracks(withMediaType: AVMediaType.video) {
             
             do {
-                try videoTrack.insertTimeRange(timeRange, of: assetVideoTrack, at: kCMTimeZero)
-                videoTrack.scaleTimeRange(timeRange, toDuration: scaleTime)
+                try videoTrack?.insertTimeRange(timeRange, of: assetVideoTrack, at: kCMTimeZero)
+                videoTrack?.scaleTimeRange(timeRange, toDuration: scaleTime)
             } catch {
                 throw error
             }
         }
         
-        for assetAudioTrack in asset.tracks(withMediaType: AVMediaTypeAudio) {
+        for assetAudioTrack in asset.tracks(withMediaType: AVMediaType.audio) {
             
             do {
-                try audioTrack.insertTimeRange(timeRange, of: assetAudioTrack, at: kCMTimeZero)
-                audioTrack.scaleTimeRange(timeRange, toDuration: scaleTime)
+                try audioTrack?.insertTimeRange(timeRange, of: assetAudioTrack, at: kCMTimeZero)
+                audioTrack?.scaleTimeRange(timeRange, toDuration: scaleTime)
             } catch {
                 throw error
             }

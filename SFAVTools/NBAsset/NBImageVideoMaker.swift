@@ -183,7 +183,7 @@ class NBImageVideoMaker {
                 return
             }
             
-            guard let buffers = try? NBAssetCMBufferReader.read(asset: asset, mediaType: AVMediaTypeAudio) else {
+            guard let buffers = try? NBAssetCMBufferReader.read(asset: asset, mediaType: AVMediaType.audio) else {
                 return
             }
             
@@ -207,7 +207,7 @@ class NBImageVideoMaker {
     private func configerProperties() -> Error? {
         
         do {
-            videoWriter = try AVAssetWriter(url: output, fileType: AVFileTypeQuickTimeMovie)
+            videoWriter = try AVAssetWriter(url: output, fileType: .mov)
         } catch {
             return error
         }
@@ -225,7 +225,7 @@ class NBImageVideoMaker {
                         AVVideoCompressionPropertiesKey: compressionProperties
         ]
         
-        writerInput = AVAssetWriterInput(mediaType: AVMediaTypeVideo, outputSettings: videoSetting)
+        writerInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoSetting)
         
         writerInput?.expectsMediaDataInRealTime = true
         
@@ -236,7 +236,7 @@ class NBImageVideoMaker {
         //audio
         if audioAsset != nil {
             audioDuration = CMTimeGetSeconds(audioAsset!.duration)
-            audioWriterInput = AVAssetWriterInput(mediaType: AVMediaTypeAudio, outputSettings: nil)
+            audioWriterInput = AVAssetWriterInput(mediaType: AVMediaType.audio, outputSettings: nil)
             audioWriterInput?.expectsMediaDataInRealTime = false
             videoWriter?.add(audioWriterInput!)
         }

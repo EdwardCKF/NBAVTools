@@ -60,20 +60,20 @@ class ViewController: UIViewController {
         view.addSubview(progressLabel!)
     }
     
-    func startButtonDidClick(_ sender: UIButton) {
+    @objc func startButtonDidClick(_ sender: UIButton) {
         
-//        demoForNB()
+        demoForNB()
 //        demoForCreateVideoFromImages()
 //        demoForAVAddAudioTest()
-        demoForVideoCompression()
+//        demoForVideoCompression()
 
     }
     
-    func endButtonDidClick(_ sender: UIButton) {
+    @objc func endButtonDidClick(_ sender: UIButton) {
         videoMaker?.end()
     }
     
-    func cancelButtonDidClick(_ sender: UIButton) {
+    @objc func cancelButtonDidClick(_ sender: UIButton) {
         videoMaker?.cancel()
     }
 
@@ -133,7 +133,7 @@ extension ViewController {
         guard let video1URL: URL = Bundle.main.url(forResource: "5_1", withExtension: "mp4") else {
             return
         }
-        guard let video2URL: URL = Bundle.main.url(forResource: "5_2", withExtension: "mp4") else {
+        guard let video2URL: URL = Bundle.main.url(forResource: "XHeyOut", withExtension: "mov") else {
             return
         }
         

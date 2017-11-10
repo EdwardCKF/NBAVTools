@@ -18,30 +18,30 @@ class AVVideoBackgroundFilter {
         var assetVideoTrack: AVAssetTrack?
         var assetAudioTrack: AVAssetTrack?
         
-        if asset.tracks(withMediaType: AVMediaTypeVideo).count > 0 {
-            assetVideoTrack = asset.tracks(withMediaType: AVMediaTypeVideo).first
+        if asset.tracks(withMediaType: AVMediaType.video).count > 0 {
+            assetVideoTrack = asset.tracks(withMediaType: AVMediaType.video).first
         }
         
-        if asset.tracks(withMediaType: AVMediaTypeAudio).count > 0 {
-            assetAudioTrack = asset.tracks(withMediaType: AVMediaTypeAudio).first
+        if asset.tracks(withMediaType: AVMediaType.audio).count > 0 {
+            assetAudioTrack = asset.tracks(withMediaType: AVMediaType.audio).first
         }
         
         guard let _assetVideoTrack = assetVideoTrack else {
             throw NSError(domain: "video asset no videoTrack", code: 0000, userInfo: nil)
         }
-        let compositionVideoTrack = mutableComposition.addMutableTrack(withMediaType: AVMediaTypeVideo, preferredTrackID: kCMPersistentTrackID_Invalid)
+        let compositionVideoTrack = mutableComposition.addMutableTrack(withMediaType: AVMediaType.video, preferredTrackID: kCMPersistentTrackID_Invalid)
         do {
             let timeRange = CMTimeRange(start: kCMTimeZero, duration: asset.duration)
-            try compositionVideoTrack.insertTimeRange(timeRange, of: _assetVideoTrack, at: kCMTimeZero)
+            try compositionVideoTrack?.insertTimeRange(timeRange, of: _assetVideoTrack, at: kCMTimeZero)
         } catch {
             throw error
         }
         
         if let _assetAudioTrack = assetAudioTrack {
-            let compositionAudioTrack = mutableComposition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid)
+            let compositionAudioTrack = mutableComposition.addMutableTrack(withMediaType: AVMediaType.audio, preferredTrackID: kCMPersistentTrackID_Invalid)
             do {
                 let timeRange = CMTimeRange(start: kCMTimeZero, duration: asset.duration)
-                try compositionAudioTrack.insertTimeRange(timeRange, of: _assetAudioTrack, at: kCMTimeZero)
+                try compositionAudioTrack?.insertTimeRange(timeRange, of: _assetAudioTrack, at: kCMTimeZero)
             } catch {
                 throw error
             }

@@ -13,7 +13,7 @@ class AVExportCommand {
     
     var videoComposition: AVMutableVideoComposition?
     var videoAudioMix: AVMutableAudioMix?
-    var outputFileType: String?
+    var outputFileType: AVFileType?
     var videoPresetName: String?
     
     var exportSession: AVAssetExportSession?
@@ -23,7 +23,7 @@ class AVExportCommand {
         -> AVAssetExportSession? {
             
             let _videoPresetName = videoPresetName ?? AVAssetExportPreset1280x720
-            let _outputFileType = outputFileType ?? AVFileTypeMPEG4
+            let _outputFileType = outputFileType ?? AVFileType.mp4
             
             exportSession = AVAssetExportSession(asset: asset, presetName: _videoPresetName)
             

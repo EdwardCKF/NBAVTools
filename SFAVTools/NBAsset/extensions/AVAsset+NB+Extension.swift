@@ -16,7 +16,7 @@ public extension AVAsset {
     
     func getVideoTrackBounds() -> CGRect {
         
-        guard let videoTrack = self.tracks(withMediaType: AVMediaTypeVideo).first else {
+        guard let videoTrack = self.tracks(withMediaType: AVMediaType.video).first else {
             return CGRect.zero
         }
         

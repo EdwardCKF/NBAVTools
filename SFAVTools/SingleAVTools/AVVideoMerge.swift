@@ -24,10 +24,10 @@ class AVVideoMerge {
             
             let timeRange = CMTimeRangeMake(kCMTimeZero, asset.duration)
             
-            for assetVideoTrack in asset.tracks(withMediaType: AVMediaTypeVideo) {
+            for assetVideoTrack in asset.tracks(withMediaType: AVMediaType.video) {
                 
                 if videoTrack == nil {
-                    videoTrack = mixComposition.addMutableTrack(withMediaType: AVMediaTypeVideo, preferredTrackID: kCMPersistentTrackID_Invalid)
+                    videoTrack = mixComposition.addMutableTrack(withMediaType: AVMediaType.video, preferredTrackID: kCMPersistentTrackID_Invalid)
                 }
                 
                 do {
@@ -37,10 +37,10 @@ class AVVideoMerge {
                 }
             }
             
-            for assetAudioTrack in asset.tracks(withMediaType: AVMediaTypeAudio) {
+            for assetAudioTrack in asset.tracks(withMediaType: AVMediaType.audio) {
                 
                 if audioTrack == nil {
-                    audioTrack = mixComposition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid)
+                    audioTrack = mixComposition.addMutableTrack(withMediaType: AVMediaType.audio, preferredTrackID: kCMPersistentTrackID_Invalid)
                 }
                 
                 do {

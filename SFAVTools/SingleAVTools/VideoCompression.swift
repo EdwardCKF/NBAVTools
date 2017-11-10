@@ -42,7 +42,7 @@ class VideoCompression {
         input = inputAsset
         output = outputURL
         
-        if let _videoTrack = input.tracks(withMediaType: AVMediaTypeVideo).first {
+        if let _videoTrack = input.tracks(withMediaType: AVMediaType.video).first {
             videoTrack = _videoTrack
             bitRate = _videoTrack.estimatedDataRate
             width = Float(_videoTrack.naturalSize.width)
@@ -51,7 +51,7 @@ class VideoCompression {
             assertionFailure("asset has no video track!!")
         }
         
-        if let _audioTrack = input.tracks(withMediaType: AVMediaTypeAudio).first {
+        if let _audioTrack = input.tracks(withMediaType: AVMediaType.audio).first {
             audioTrack = _audioTrack
         }
     }
@@ -142,7 +142,7 @@ class VideoCompression {
     
     private func setWriter() {
         do {
-            try writer = AVAssetWriter(outputURL: output, fileType: AVFileTypeQuickTimeMovie)
+            try writer = AVAssetWriter(outputURL: output, fileType: .mov)
         } catch {
             delegate?.videoCompressionError(error, sender: self)
         }
@@ -153,7 +153,7 @@ class VideoCompression {
             
             let writerOutputSetting: [String : Any] = [AVVideoCodecKey: AVVideoCodecH264, AVVideoWidthKey: width, AVVideoHeightKey: height, AVVideoCompressionPropertiesKey: videoCompressionSetting]
             
-            videoWriterInput = AVAssetWriterInput(mediaType: AVMediaTypeVideo, outputSettings: writerOutputSetting, sourceFormatHint: nil)
+            videoWriterInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: writerOutputSetting, sourceFormatHint: nil)
             
             videoWriterInput?.expectsMediaDataInRealTime = true
             
@@ -161,7 +161,7 @@ class VideoCompression {
         }
         
         func setAudioWriterInput() {
-            audioWriterInput = AVAssetWriterInput(mediaType: AVMediaTypeAudio, outputSettings: nil)
+            audioWriterInput = AVAssetWriterInput(mediaType: AVMediaType.audio, outputSettings: nil)
             audioWriterInput?.expectsMediaDataInRealTime = true
         }
         

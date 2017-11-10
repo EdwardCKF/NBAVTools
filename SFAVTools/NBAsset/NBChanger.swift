@@ -19,7 +19,7 @@ public class NBChanger {
     fileprivate var resolutionMode: String = AVAssetExportPresetHighestQuality
     fileprivate var exportSession: AVAssetExportSession?
     fileprivate var videoAudioMix: AVMutableAudioMix?
-    fileprivate var videoMode: String = AVFileTypeQuickTimeMovie
+    fileprivate var videoMode: AVFileType = AVFileType.mov
     fileprivate var videoFPS: Float = 30
     
     init(_ avAsset: AVAsset) {
@@ -45,10 +45,10 @@ public class NBChanger {
         
         let _timeRange = timeRange ?? CMTimeRangeMake(kCMTimeZero, asset.duration)
         
-        for assetVideoTrack in asset.tracks(withMediaType: AVMediaTypeVideo) {
+        for assetVideoTrack in asset.tracks(withMediaType: AVMediaType.video) {
             
             if videoTrack == nil {
-                videoTrack = mixComposition.addMutableTrack(withMediaType: AVMediaTypeVideo, preferredTrackID: kCMPersistentTrackID_Invalid)
+                videoTrack = mixComposition.addMutableTrack(withMediaType: AVMediaType.video, preferredTrackID: kCMPersistentTrackID_Invalid)
             }
             
             do {
@@ -58,10 +58,10 @@ public class NBChanger {
             }
         }
         
-        for assetAudioTrack in asset.tracks(withMediaType: AVMediaTypeAudio) {
+        for assetAudioTrack in asset.tracks(withMediaType: AVMediaType.audio) {
             
             if audioTrack == nil {
-                audioTrack = mixComposition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid)
+                audioTrack = mixComposition.addMutableTrack(withMediaType: AVMediaType.audio, preferredTrackID: kCMPersistentTrackID_Invalid)
             }
             
             do {
@@ -75,21 +75,21 @@ public class NBChanger {
     }
     
     private func getDefultRenderSize() -> CGSize {
-        guard let videoTrack = asset.tracks(withMediaType: AVMediaTypeVideo).first else {
+        guard let videoTrack = asset.tracks(withMediaType: AVMediaType.video).first else {
             return CGSize.zero
         }
         return videoTrack.naturalSize
     }
     
     private func getDefultTransform() -> CGAffineTransform {
-        guard let videoTrack = asset.tracks(withMediaType: AVMediaTypeVideo).first else {
+        guard let videoTrack = asset.tracks(withMediaType: AVMediaType.video).first else {
             return CGAffineTransform.identity
         }
         return videoTrack.preferredTransform
     }
     
     private func getDefultFPS() -> Float {
-        guard let videoTrack = asset.tracks(withMediaType: AVMediaTypeVideo).first else {
+        guard let videoTrack = asset.tracks(withMediaType: AVMediaType.video).first else {
             return 30
         }
         return videoTrack.nominalFrameRate
@@ -113,7 +113,7 @@ extension NBChanger {
         return self
     }
     
-    @discardableResult func videoMode(_ mode: String) -> NBChanger {
+    @discardableResult func videoMode(_ mode: AVFileType) -> NBChanger {
         
         videoMode = mode
         
@@ -182,7 +182,7 @@ extension NBChanger {
     
     fileprivate func processMutableVideoComposition() {
         
-        guard let videoTrack = mutableComposition.tracks(withMediaType: AVMediaTypeVideo).first else {
+        guard let videoTrack = mutableComposition.tracks(withMediaType: AVMediaType.video).first else {
             return
         }
         
@@ -207,13 +207,13 @@ extension NBChanger {
             
             let timeRange = CMTimeRangeMake(kCMTimeZero, asset.duration)
             
-            var videoTrack: AVMutableCompositionTrack? = mutableComposition.tracks(withMediaType: AVMediaTypeVideo).first
-            var audioTrack: AVMutableCompositionTrack? = mutableComposition.tracks(withMediaType: AVMediaTypeAudio).first
+            var videoTrack: AVMutableCompositionTrack? = mutableComposition.tracks(withMediaType: AVMediaType.video).first
+            var audioTrack: AVMutableCompositionTrack? = mutableComposition.tracks(withMediaType: AVMediaType.audio).first
             
-            for assetVideoTrack in asset.tracks(withMediaType: AVMediaTypeVideo) {
+            for assetVideoTrack in asset.tracks(withMediaType: AVMediaType.video) {
                 
                 if videoTrack == nil {
-                    videoTrack = mutableComposition.addMutableTrack(withMediaType: AVMediaTypeVideo, preferredTrackID: kCMPersistentTrackID_Invalid)
+                    videoTrack = mutableComposition.addMutableTrack(withMediaType: AVMediaType.video, preferredTrackID: kCMPersistentTrackID_Invalid)
                 }
                 
                 do {
@@ -222,10 +222,10 @@ extension NBChanger {
                 }
             }
             
-            for assetAudioTrack in asset.tracks(withMediaType: AVMediaTypeAudio) {
+            for assetAudioTrack in asset.tracks(withMediaType: AVMediaType.audio) {
                 
                 if audioTrack == nil {
-                    audioTrack = mutableComposition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid)
+                    audioTrack = mutableComposition.addMutableTrack(withMediaType: AVMediaType.audio, preferredTrackID: kCMPersistentTrackID_Invalid)
                 }
                 
                 do {
@@ -292,7 +292,7 @@ extension NBChanger {
     
     fileprivate func _background(_ image: CGImage) {
         
-        guard let videoTrack = mutableComposition.tracks(withMediaType: AVMediaTypeVideo).first else {
+        guard let videoTrack = mutableComposition.tracks(withMediaType: AVMediaType.video).first else {
             return
         }
         
@@ -361,11 +361,11 @@ extension NBChanger {
         let scaleTimeValue = Double(mutableComposition.duration.value)/speedMultiple
         let scaleTime = CMTime(value: CMTimeValue(scaleTimeValue), timescale: mutableComposition.duration.timescale)
         
-        for videoTrack in mutableComposition.tracks(withMediaType: AVMediaTypeVideo) {
+        for videoTrack in mutableComposition.tracks(withMediaType: AVMediaType.video) {
             videoTrack.scaleTimeRange(timeRange, toDuration: scaleTime)
         }
         
-        for audioTrack in mutableComposition.tracks(withMediaType: AVMediaTypeAudio) {
+        for audioTrack in mutableComposition.tracks(withMediaType: AVMediaType.audio) {
             audioTrack.scaleTimeRange(timeRange, toDuration: scaleTime)
         }
     }
@@ -397,11 +397,11 @@ extension NBChanger {
         
         let timeRange = CMTimeRangeMake(kCMTimeZero, mutableComposition.duration)
         
-        var audioTrack: AVMutableCompositionTrack? = mutableComposition.tracks(withMediaType: AVMediaTypeAudio).first
+        var audioTrack: AVMutableCompositionTrack? = mutableComposition.tracks(withMediaType: AVMediaType.audio).first
         
-        for assetAudioTrack in audio.tracks(withMediaType: AVMediaTypeAudio) {
+        for assetAudioTrack in audio.tracks(withMediaType: AVMediaType.audio) {
             if audioTrack == nil {
-                audioTrack = mutableComposition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid)
+                audioTrack = mutableComposition.addMutableTrack(withMediaType: AVMediaType.audio, preferredTrackID: kCMPersistentTrackID_Invalid)
             }
             do {
                 try audioTrack?.insertTimeRange(timeRange, of: assetAudioTrack, at: kCMTimeZero)

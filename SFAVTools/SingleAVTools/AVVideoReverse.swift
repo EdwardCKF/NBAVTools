@@ -13,7 +13,7 @@ class AVVideoReverse {
     fileprivate var reader: AVAssetReader?
     fileprivate var writer: AVAssetWriter?
     
-    func videoReverse(videoAsset asset: AVAsset, outputURL: URL, fileType: String?, finished: (()->())?) throws {
+    func videoReverse(videoAsset asset: AVAsset, outputURL: URL, fileType: AVFileType?, finished: (()->())?) throws {
         
         do {
             reader = try AVAssetReader(asset: asset)
@@ -21,7 +21,7 @@ class AVVideoReverse {
             throw error
         }
         
-        guard let videoTrack = asset.tracks(withMediaType: AVMediaTypeVideo).first else {
+        guard let videoTrack = asset.tracks(withMediaType: AVMediaType.video).first else {
             throw NSError(domain: "No video track", code: 00003, userInfo: nil)
         }
         
@@ -46,7 +46,7 @@ class AVVideoReverse {
 
         do {
         
-            let _fileType = fileType ?? AVFileTypeQuickTimeMovie
+            let _fileType = fileType ?? .mov
             try writer = AVAssetWriter(outputURL: outputURL, fileType: _fileType)
         } catch {
             throw error
@@ -58,7 +58,7 @@ class AVVideoReverse {
         
         let formatDescription: CMFormatDescription = videoTrack.formatDescriptions.last as! CMFormatDescription
         
-        let writerInput = AVAssetWriterInput(mediaType: AVMediaTypeVideo, outputSettings: writerOutputSetting, sourceFormatHint: formatDescription)
+        let writerInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: writerOutputSetting, sourceFormatHint: formatDescription)
         
         writerInput.expectsMediaDataInRealTime = false
         

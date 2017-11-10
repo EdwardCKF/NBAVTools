@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2BA0527F1FB581D10069645D /* XHeyOut.mov in Resources */ = {isa = PBXBuildFile; fileRef = 2BA0527E1FB581D00069645D /* XHeyOut.mov */; };
 		3C1274031F27185B0024BD45 /* VideoCompression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C1274021F27185B0024BD45 /* VideoCompression.swift */; };
 		3C52B3651ECE8C8900B9687D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C52B3641ECE8C8900B9687D /* Constants.swift */; };
 		3C52B37C1ECE927A00B9687D /* 5.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 3C52B36F1ECE927A00B9687D /* 5.m4v */; };
@@ -48,6 +49,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2BA0527E1FB581D00069645D /* XHeyOut.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = XHeyOut.mov; sourceTree = "<group>"; };
 		3C1274021F27185B0024BD45 /* VideoCompression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoCompression.swift; sourceTree = "<group>"; };
 		3C52B3641ECE8C8900B9687D /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		3C52B36F1ECE927A00B9687D /* 5.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = 5.m4v; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 				3C52B3701ECE927A00B9687D /* heng.MOV */,
 				3CCED8121F03867500544F45 /* shu.mp4 */,
 				3CB248441ED52042005BD47C /* 121.MP4 */,
+				2BA0527E1FB581D00069645D /* XHeyOut.mov */,
 				3C52B3721ECE927A00B9687D /* Snip20170518_1.png */,
 				3C52B3731ECE927A00B9687D /* Snip20170518_3.png */,
 			);
@@ -295,6 +298,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CCED8131F03867500544F45 /* shu.mp4 in Resources */,
+				2BA0527F1FB581D10069645D /* XHeyOut.mov in Resources */,
 				3CB248451ED52042005BD47C /* 121.MP4 in Resources */,
 				3C52B37C1ECE927A00B9687D /* 5.m4v in Resources */,
 				3C6714F11EDFFBB500290FB0 /* 5_3.mp4 in Resources */,
@@ -473,7 +477,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SFAVTools/SFAVTools-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -489,7 +493,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = EdwardCorpation.SFAVTools;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SFAVTools/SFAVTools-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
